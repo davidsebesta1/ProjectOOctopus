@@ -4,34 +4,17 @@ using Mopups.Services;
 using ProjectOOctopus.Data;
 using ProjectOOctopus.Pages;
 using ProjectOOctopus.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectOOctopus.ViewModels
 {
     public partial class MainPageViewModel : ObservableObject
     {
-        private EmployeesService _employeesService;
-        private ProjectsService _projectsService;
+        #region Properties
 
-        public MainPageViewModel(EmployeesService service, ProjectsService projectsService)
-        {
-            _employeesService = service;
-            _projectsService = projectsService;
-
-            RefreshEmployeesCommand.Execute(null);
-            RefreshProjectsCommand.Execute(null);
-        }
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-        private bool _isBusy = false;
-
-        public bool IsNotBusy => !IsBusy;
+        private readonly EmployeesService _employeesService;
+        private readonly ProjectsService _projectsService;
+        private readonly RolesService _rolesService;
 
         [ObservableProperty]
         private ObservableCollection<Employee> _employees;
@@ -39,10 +22,38 @@ namespace ProjectOOctopus.ViewModels
         [ObservableProperty]
         private ObservableCollection<ProjectData> _projects;
 
+        private RoleManagerPopup _roleManagerPopup;
+
+        #endregion
+
+        #region Ctor
+
+        public MainPageViewModel(EmployeesService empService, ProjectsService projectsService, RolesService rolesService, RoleManagerPopup roleManagerPopup)
+        {
+            _employeesService = empService;
+            _projectsService = projectsService;
+            _rolesService = rolesService;
+
+            _roleManagerPopup = roleManagerPopup;
+
+            RefreshEmployees();
+            RefreshProjects();
+        }
+
+        #endregion
+
+        #region Commands
+
         [RelayCommand]
         private async Task AddEmployeeToProject(ProjectData project)
         {
-            await MopupService.Instance.PushAsync(new AddEmployeePopup(_employeesService, project));
+            await MopupService.Instance.PushAsync(new AssignEmployeePopup(project));
+        }
+
+        [RelayCommand]
+        private async Task AddEmployee()
+        {
+            await MopupService.Instance.PushAsync(new AddEmployeePopup(_employeesService));
         }
 
         [RelayCommand]
@@ -52,9 +63,14 @@ namespace ProjectOOctopus.ViewModels
         }
 
         [RelayCommand]
+        private void SearchProjectsByName(string name)
+        {
+            _projectsService.SearchByName(name);
+        }
+
+        [RelayCommand]
         private void RefreshEmployees()
         {
-
             Employees = _employeesService.Employees;
         }
 
@@ -63,5 +79,13 @@ namespace ProjectOOctopus.ViewModels
         {
             Projects = _projectsService.Projects;
         }
+
+        [RelayCommand]
+        private async Task OpenRoleManager()
+        {
+            await MopupService.Instance.PushAsync(_roleManagerPopup);
+        }
+
+        #endregion
     }
 }

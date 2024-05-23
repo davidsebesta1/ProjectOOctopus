@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectOOctopus.Pages.RoleManagerPopup"
+             xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+             xmlns:viewmodel="clr-namespace:ProjectOOctopus.ViewModels"
+             xmlns:data="clr-namespace:ProjectOOctopus.Data"
+             x:DataType="viewmodel:RoleManagerViewModel"
+             BackgroundColor="#88000000"
+             Title="RoleManagerPopup">
+    <Frame BackgroundColor="#444444" HeightRequest="610" WidthRequest="510" Padding="2" Margin="0">
+        <Grid RowDefinitions="35, *">
+            <HorizontalStackLayout Grid.Row="0" BackgroundColor="#222222">
+                <Label Text="Roles" FontSize="16" TextColor="#FFFFFF" VerticalOptions="Center" Margin="10,0,0,0"/>
+            </HorizontalStackLayout>
+
+            <Grid Grid.Row="1">
+                <Frame CornerRadius="0">
+                    <Grid RowDefinitions="*, 65">
+                        <CollectionView Grid.Row="0" ItemsSource="{Binding Roles}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="data:EmployeeRole">
+                                    <Grid ColumnDefinitions="*, 60" HorizontalOptions="FillAndExpand" Padding="0">
+                                        <Frame Grid.Column="0" BackgroundColor="#333333" CornerRadius="0" BorderColor="Transparent">
+                                            <Label Text="{Binding Name}"/>
+                                        </Frame>
+                                        <Frame Grid.Column="1" BackgroundColor="{Binding Color}" CornerRadius="0" BorderColor="Transparent"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <Button Grid.Row="1" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Margin="0, 0, 15, 15" Command="{Binding AddNewRoleCommand}"/>
+                    </Grid>
+                </Frame>
+            </Grid>
+        </Grid>
+    </Frame>
+</mopups:PopupPage>

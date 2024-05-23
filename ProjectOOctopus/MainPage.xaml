@@ -9,8 +9,12 @@
 
     <!-- Menu bar -->
     <ContentPage.MenuBarItems>
-        <MenuBarItem Text="Menu">
-            <MenuFlyoutItem Text="Theme Change"/>
+        <MenuBarItem Text="Roles">
+            <MenuFlyoutItem Text="Manage roles" Command="{Binding OpenRoleManagerCommand}">
+                <MenuFlyoutItem.IconImageSource>
+                    <FontImageSource Glyph="&#128736;" FontFamily="Arial"/>
+                </MenuFlyoutItem.IconImageSource>
+            </MenuFlyoutItem>
         </MenuBarItem>
 
         <MenuBarItem Text="Export">
@@ -23,9 +27,18 @@
         <Grid ColumnDefinitions="*, 325" RowDefinitions="*">
 
             <!-- Left projects panel -->
-            <Frame Grid.Column="0" BackgroundColor="Transparent" CornerRadius="0" BorderColor="#939393">
-                <Grid RowDefinitions="*, 50">
-                    <CollectionView ItemsSource="{Binding Projects}" Grid.Row="0">
+            <Frame Grid.Column="0" BackgroundColor="Transparent" CornerRadius="0" BorderColor="#939393" Padding="10">
+                <Grid RowDefinitions="50, *, 50">
+
+                    <!-- Top label and search project entry -->
+                    <VerticalStackLayout Grid.Row="0">
+                        <Label Text="Projects" TextColor="#CC999999" FontAttributes="Italic" HorizontalOptions="Start" HeightRequest="20"/>
+                        <Entry Placeholder="Search by name..." PlaceholderColor="#999999" HeightRequest="25" VerticalOptions="Start" FontAttributes="Italic" FontSize="16" Margin="-12,0,0,0" TextChanged="Entry_TextChanged"/>
+                    </VerticalStackLayout>
+
+
+                    <CollectionView ItemsSource="{Binding Projects}" Grid.Row="1">
+
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
                         </CollectionView.ItemsLayout>
@@ -34,7 +47,16 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:ProjectData">
                                 <Frame HeightRequest="300" BackgroundColor="#88AFAFAF" BorderColor="Transparent" CornerRadius="5" Padding="5">
-                                    <Grid ColumnDefinitions="*" RowDefinitions="45, *, 55" Margin="0" Padding="0">
+                                    <FlyoutBase.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="Hello"/>
+                                        </MenuFlyout>
+                                    </FlyoutBase.ContextFlyout>
+                                    <Frame.GestureRecognizers>
+                                        <DropGestureRecognizer AllowDrop="True" Drop="DropGestureRecognizer_Drop"/>
+                                    </Frame.GestureRecognizers>
+
+                                    <Grid ColumnDefinitions="*" RowDefinitions="45, *" Margin="0" Padding="0">
 
                                         <!-- Pr name and description -->
                                         <VerticalStackLayout Grid.Row="0">
@@ -42,44 +64,52 @@
                                             <Label Text="{Binding ProjectDescription}" FontSize="12" FontAttributes="Italic" Margin="10, 0, 0, 0"/>
                                         </VerticalStackLayout>
 
-                                        <!-- Assigned employeees -->
+                                        <!-- Assigned employees -->
                                         <Grid Grid.Row="1">
-                                            <CollectionView ItemsSource="{Binding AssignedEmployees}" SelectionMode="Single" HorizontalScrollBarVisibility="Never">
-                                                <CollectionView.EmptyView>
-                                                    <Label Text="No employees yet assigned" FontAttributes="Italic"/>
-                                                </CollectionView.EmptyView>
+                                            <FlexLayout Direction="Row" JustifyContent="Start" AlignContent="Start">
+                                                <CollectionView ItemsSource="{Binding EmployeesByRoles}">
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate x:DataType="data:EmployeeRole">
+                                                            <Frame BackgroundColor="{Binding Color}" HeightRequest="200" WidthRequest="500">
+                                                                <CollectionView ItemsSource="{Binding AssignedEmployees}" SelectionMode="Single" HorizontalScrollBarVisibility="Never">
+                                                                    <CollectionView.EmptyView>
+                                                                        <Label Text="No employees yet assigned" TextColor="Black" FontAttributes="Italic"/>
+                                                                    </CollectionView.EmptyView>
 
-                                                <CollectionView.ItemsLayout>
-                                                    <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal" />
-                                                </CollectionView.ItemsLayout>
+                                                                    <CollectionView.ItemsLayout>
+                                                                        <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal" />
+                                                                    </CollectionView.ItemsLayout>
 
-                                                <CollectionView.ItemTemplate>
-                                                    <DataTemplate x:DataType="data:Employee">
-                                                        <Grid RowDefinitions="80, 35, 35" BackgroundColor="#FFFFFF" WidthRequest="100">
-                                                            <Label Grid.Row="1" Text="{Binding FirstName}" TextColor="Black" FontSize="24" HorizontalTextAlignment="Center"/>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </CollectionView.ItemTemplate>
-                                            </CollectionView>
+                                                                    <CollectionView.ItemTemplate>
+                                                                        <DataTemplate x:DataType="data:Employee">
+                                                                            <VerticalStackLayout BackgroundColor="Black">
+                                                                                <Label Grid.Row="1" Text="{Binding FirstName}" TextColor="White" FontSize="24" HorizontalTextAlignment="Center"/>
+                                                                            </VerticalStackLayout>
+                                                                        </DataTemplate>
+                                                                    </CollectionView.ItemTemplate>
+                                                                </CollectionView>
+                                                            </Frame>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+
+                                            </FlexLayout>
                                         </Grid>
-
-                                        <Button Grid.Row="3" HeightRequest="25" WidthRequest="25" HorizontalOptions="End" 
-                                            Margin="0, 0, 5, 0" Text="+" FontSize="42" Padding="0" 
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=AddEmployeeToProjectCommand}" CommandParameter="{Binding .}"/>
                                     </Grid>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
-                    <Button Grid.Row="1" WidthRequest="50" HeightRequest="50" Text="+" FontSize="42" HorizontalOptions="End" Command="{Binding AddProjectCommand}"/>
+                    <Button Grid.Row="2" WidthRequest="50" HeightRequest="50" Text="+" FontSize="42" HorizontalOptions="End" Command="{Binding AddProjectCommand}"/>
                 </Grid>
             </Frame>
 
             <!-- Right side bar -->
             <Frame Grid.Column="1" Padding="0" CornerRadius="0" BorderColor="#88AFAFAF" BackgroundColor="Transparent" Margin="-1, 0, 0, 0">
                 <Grid ColumnDefinitions="*" RowDefinitions="*, 65">
-                    <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="0">
+                    <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="0" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged"
+                                    >
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:Employee">
                                 <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF">
@@ -87,12 +117,16 @@
                                         <Label Text="{Binding FirstName}" Grid.Row="0"/>
                                         <Label Text="{Binding LastName}" Grid.Row="1"/>
                                     </Grid>
+
+                                    <Frame.GestureRecognizers>
+                                        <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting"/>
+                                    </Frame.GestureRecognizers>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                    
-                    <Button Grid.Row="1" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Command="{Binding AddProjectCommand}" Margin="0, 0, 15, 15"/>
+
+                    <Button Grid.Row="1" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Command="{Binding AddEmployeeCommand}" Margin="0, 0, 15, 15"/>
                 </Grid>
             </Frame>
         </Grid>

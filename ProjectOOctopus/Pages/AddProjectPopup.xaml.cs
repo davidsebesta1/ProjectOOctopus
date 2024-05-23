@@ -16,7 +16,7 @@ public partial class AddProjectPopup : PopupPage
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
-        _projectsService.Projects.Add(new ProjectData(ProjectNameEntry.Text, ProjectDescriptionEntry.Text));
+        _projectsService.AddProject(new ProjectData(ProjectNameEntry.Text, ProjectDescriptionEntry.Text));
         await MopupService.Instance.PopAsync();
     }
 }

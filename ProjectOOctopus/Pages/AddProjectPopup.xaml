@@ -5,12 +5,12 @@
              xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
              BackgroundColor="#88000000">
     <ScrollView WidthRequest="350" HeightRequest="500" BackgroundColor="#EE333333">
-        <VerticalStackLayout Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+        <VerticalStackLayout Padding="10" BackgroundColor="#444444">
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="Project Name*" FontSize="18" TextColor="White"/>
                     <Entry x:Name="ProjectNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="PrNameErrText" Text="Name must be filled" IsVisible="False" TextColor="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}"/>
+                    <Label x:Name="PrNameErrText" Text="Name must be filled" IsVisible="False"  TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 
@@ -18,7 +18,7 @@
                 <StackLayout Padding="5">
                     <Label Text="Project Description*" FontSize="18" TextColor="White"/>
                     <Entry x:Name="ProjectDescriptionEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="PrDescNameErrText" Text="Last name must be filled" IsVisible="False" TextColor="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}"/>
+                    <Label x:Name="PrDescNameErrText" Text="Last name must be filled" IsVisible="False"  TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 
