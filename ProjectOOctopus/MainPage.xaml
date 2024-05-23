@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:ProjectOOctopus.ViewModels"
+             xmlns:data="clr-namespace:ProjectOOctopus.Data"
+             Title=""
+             x:DataType="viewmodel:MainPageViewModel"
+             x:Class="ProjectOOctopus.MainPage">
+
+    <!-- Menu bar -->
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="Menu">
+            <MenuFlyoutItem Text="Theme Change"/>
+        </MenuBarItem>
+
+        <MenuBarItem Text="Export">
+            <MenuFlyoutItem Text="CSV"/>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
+    <!-- Main Frame -->
+    <Frame Padding="0" Margin="0">
+        <Grid ColumnDefinitions="*, 325" RowDefinitions="*">
+
+            <!-- Left projects panel -->
+            <Frame Grid.Column="0" BackgroundColor="Transparent" CornerRadius="0" BorderColor="#939393">
+                <Grid RowDefinitions="*, 50">
+                    <CollectionView ItemsSource="{Binding Projects}" Grid.Row="0">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+
+                        <!-- Project template -->
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="data:ProjectData">
+                                <Frame HeightRequest="300" BackgroundColor="#88AFAFAF" BorderColor="Transparent" CornerRadius="5" Padding="5">
+                                    <Grid ColumnDefinitions="*" RowDefinitions="45, *, 55" Margin="0" Padding="0">
+
+                                        <!-- Pr name and description -->
+                                        <VerticalStackLayout Grid.Row="0">
+                                            <Label Text="{Binding ProjectName}" FontSize="18" Margin="5,0,0,0"/>
+                                            <Label Text="{Binding ProjectDescription}" FontSize="12" FontAttributes="Italic" Margin="10, 0, 0, 0"/>
+                                        </VerticalStackLayout>
+
+                                        <!-- Assigned employeees -->
+                                        <Grid Grid.Row="1">
+                                            <CollectionView ItemsSource="{Binding AssignedEmployees}" SelectionMode="Single" HorizontalScrollBarVisibility="Never">
+                                                <CollectionView.EmptyView>
+                                                    <Label Text="No employees yet assigned" FontAttributes="Italic"/>
+                                                </CollectionView.EmptyView>
+
+                                                <CollectionView.ItemsLayout>
+                                                    <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal" />
+                                                </CollectionView.ItemsLayout>
+
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate x:DataType="data:Employee">
+                                                        <Grid RowDefinitions="80, 35, 35" BackgroundColor="#FFFFFF" WidthRequest="100">
+                                                            <Label Grid.Row="1" Text="{Binding FirstName}" TextColor="Black" FontSize="24" HorizontalTextAlignment="Center"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+                                        </Grid>
+
+                                        <Button Grid.Row="3" HeightRequest="25" WidthRequest="25" HorizontalOptions="End" 
+                                            Margin="0, 0, 5, 0" Text="+" FontSize="42" Padding="0" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=AddEmployeeToProjectCommand}" CommandParameter="{Binding .}"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Grid.Row="1" WidthRequest="50" HeightRequest="50" Text="+" FontSize="42" HorizontalOptions="End" Command="{Binding AddProjectCommand}"/>
+                </Grid>
+            </Frame>
+
+            <!-- Right side bar -->
+            <Frame Grid.Column="1" Padding="0" CornerRadius="0" BorderColor="#88AFAFAF" BackgroundColor="Transparent" Margin="-1, 0, 0, 0">
+                <Grid ColumnDefinitions="*" RowDefinitions="*, 65">
+                    <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="data:Employee">
+                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF">
+                                    <Grid ColumnDefinitions="*" RowDefinitions="20, 20" Padding="0" Margin="0">
+                                        <Label Text="{Binding FirstName}" Grid.Row="0"/>
+                                        <Label Text="{Binding LastName}" Grid.Row="1"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    
+                    <Button Grid.Row="1" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Command="{Binding AddProjectCommand}" Margin="0, 0, 15, 15"/>
+                </Grid>
+            </Frame>
+        </Grid>
+    </Frame>
+
+</ContentPage>

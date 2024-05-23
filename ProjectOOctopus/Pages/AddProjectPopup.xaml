@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectOOctopus.Pages.AddProjectPopup"
+             xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+             BackgroundColor="#88000000">
+    <ScrollView WidthRequest="350" HeightRequest="500" BackgroundColor="#EE333333">
+        <VerticalStackLayout Padding="10" BackgroundColor="{AppThemeBinding Light={StaticResource Background}, Dark={StaticResource BackgroundDark}}">
+            <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
+                <StackLayout Padding="5">
+                    <Label Text="Project Name*" FontSize="18" TextColor="White"/>
+                    <Entry x:Name="ProjectNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
+                    <Label x:Name="PrNameErrText" Text="Name must be filled" IsVisible="False" TextColor="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}"/>
+                </StackLayout>
+            </Frame>
+
+            <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
+                <StackLayout Padding="5">
+                    <Label Text="Project Description*" FontSize="18" TextColor="White"/>
+                    <Entry x:Name="ProjectDescriptionEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
+                    <Label x:Name="PrDescNameErrText" Text="Last name must be filled" IsVisible="False" TextColor="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}"/>
+                </StackLayout>
+            </Frame>
+
+            <Button x:Name="AddOrEditButton" Text="Add" Grid.Column="0" WidthRequest="150" HeightRequest="50" Margin="0, 25, 0, 0" Clicked="AddOrEditButton_Clicked"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</mopups:PopupPage>
