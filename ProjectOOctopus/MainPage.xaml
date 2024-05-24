@@ -10,11 +10,8 @@
     <!-- Menu bar -->
     <ContentPage.MenuBarItems>
         <MenuBarItem Text="Roles">
-            <MenuFlyoutItem Text="Manage roles" Command="{Binding OpenRoleManagerCommand}">
-                <MenuFlyoutItem.IconImageSource>
-                    <FontImageSource Glyph="&#128736;" FontFamily="Arial"/>
-                </MenuFlyoutItem.IconImageSource>
-            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Manage roles" Command="{Binding OpenRoleManagerCommand}"/>
+
         </MenuBarItem>
 
         <MenuBarItem Text="Export">
@@ -33,7 +30,7 @@
                     <!-- Top label and search project entry -->
                     <VerticalStackLayout Grid.Row="0">
                         <Label Text="Projects" TextColor="#CC999999" FontAttributes="Italic" HorizontalOptions="Start" HeightRequest="20"/>
-                        <Entry Placeholder="Search by name..." PlaceholderColor="#999999" HeightRequest="25" VerticalOptions="Start" FontAttributes="Italic" FontSize="16" Margin="-12,0,0,0" TextChanged="Entry_TextChanged"/>
+                        <Entry Placeholder="Search by project name..." PlaceholderColor="#999999" HeightRequest="25" VerticalOptions="Start" FontAttributes="Italic" FontSize="16" Margin="-12,0,0,0" TextChanged="SearchProjectByName_TextChanged"/>
                     </VerticalStackLayout>
 
 
@@ -47,14 +44,15 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:ProjectData">
                                 <Frame HeightRequest="300" BackgroundColor="#88AFAFAF" BorderColor="Transparent" CornerRadius="5" Padding="5">
+
+                                    <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>
                                         <MenuFlyout>
-                                            <MenuFlyoutItem Text="Hello"/>
+                                            <MenuFlyoutItem Text="Add Role Group"/>
+                                            <MenuFlyoutItem Text="Edit Project"/>
+                                            <MenuFlyoutItem Text="Remove Project"/>
                                         </MenuFlyout>
                                     </FlyoutBase.ContextFlyout>
-                                    <Frame.GestureRecognizers>
-                                        <DropGestureRecognizer AllowDrop="True" Drop="DropGestureRecognizer_Drop"/>
-                                    </Frame.GestureRecognizers>
 
                                     <Grid ColumnDefinitions="*" RowDefinitions="45, *" Margin="0" Padding="0">
 
@@ -64,36 +62,69 @@
                                             <Label Text="{Binding ProjectDescription}" FontSize="12" FontAttributes="Italic" Margin="10, 0, 0, 0"/>
                                         </VerticalStackLayout>
 
-                                        <!-- Assigned employees -->
-                                        <Grid Grid.Row="1">
-                                            <FlexLayout Direction="Row" JustifyContent="Start" AlignContent="Start">
-                                                <CollectionView ItemsSource="{Binding EmployeesByRoles}">
-                                                    <CollectionView.ItemTemplate>
-                                                        <DataTemplate x:DataType="data:EmployeeRole">
-                                                            <Frame BackgroundColor="{Binding Color}" HeightRequest="200" WidthRequest="500">
-                                                                <CollectionView ItemsSource="{Binding AssignedEmployees}" SelectionMode="Single" HorizontalScrollBarVisibility="Never">
+                                        <!-- Employees by roles -->
+                                        <Grid Grid.Row="1" HeightRequest="200">
+                                            <CollectionView ItemsSource="{Binding EmployeesByRoles}">
+                                                <CollectionView.ItemsLayout>
+                                                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="5"/>
+                                                </CollectionView.ItemsLayout>
+
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate x:DataType="data:AssignedRoleCollection">
+                                                        <Frame BackgroundColor="{Binding Role.Color}" Padding="5" CornerRadius="5" BorderColor="#22000000" MinimumWidthRequest="100">
+
+                                                            <!-- Right click menu-->
+                                                            <FlyoutBase.ContextFlyout>
+                                                                <MenuFlyout>
+                                                                    <MenuFlyoutItem Text="Remove Role Group"/>
+                                                                </MenuFlyout>
+                                                            </FlyoutBase.ContextFlyout>
+
+                                                            <!-- Drag Gesture Start -->
+                                                            <Frame.GestureRecognizers>
+                                                                <DropGestureRecognizer AllowDrop="True" Drop="DropGestureRecognizer_Drop"/>
+                                                            </Frame.GestureRecognizers>
+
+                                                            <!-- Assigned employees -->
+                                                            <Grid RowDefinitions="25, *">
+                                                                <Label Grid.Row="0" Text="{Binding Role.Name}" FontSize="20"/>
+                                                                <CollectionView Grid.Row="1" ItemsSource="{Binding .}" SelectionMode="Single" HorizontalScrollBarVisibility="Never">
                                                                     <CollectionView.EmptyView>
                                                                         <Label Text="No employees yet assigned" TextColor="Black" FontAttributes="Italic"/>
                                                                     </CollectionView.EmptyView>
 
                                                                     <CollectionView.ItemsLayout>
-                                                                        <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal" />
+                                                                        <GridItemsLayout Orientation="Horizontal" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="5"/>
                                                                     </CollectionView.ItemsLayout>
 
                                                                     <CollectionView.ItemTemplate>
                                                                         <DataTemplate x:DataType="data:Employee">
-                                                                            <VerticalStackLayout BackgroundColor="Black">
-                                                                                <Label Grid.Row="1" Text="{Binding FirstName}" TextColor="White" FontSize="24" HorizontalTextAlignment="Center"/>
-                                                                            </VerticalStackLayout>
+                                                                            <HorizontalStackLayout HeightRequest="50">
+                                                                                <Frame Padding="0" Margin="0" CornerRadius="15" BackgroundColor="#EEEEEE" BorderColor="#22000000">
+
+                                                                                    <!-- Right click menu-->
+                                                                                    <FlyoutBase.ContextFlyout>
+                                                                                        <MenuFlyout>
+                                                                                            <MenuFlyoutItem Text="Remove"/>
+                                                                                        </MenuFlyout>
+                                                                                    </FlyoutBase.ContextFlyout>
+
+                                                                                    <!-- Drag Gesture Start -->
+                                                                                    <Frame.GestureRecognizers>
+                                                                                        <DragGestureRecognizer CanDrag="True" DragStarting="DragStartEmployeeReAssign"/>
+                                                                                    </Frame.GestureRecognizers>
+
+                                                                                    <Label Grid.Row="1" Text="{Binding Initials}" TextColor="#000000" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="50"/>
+                                                                                </Frame>
+                                                                            </HorizontalStackLayout>
                                                                         </DataTemplate>
                                                                     </CollectionView.ItemTemplate>
                                                                 </CollectionView>
-                                                            </Frame>
-                                                        </DataTemplate>
-                                                    </CollectionView.ItemTemplate>
-                                                </CollectionView>
-
-                                            </FlexLayout>
+                                                            </Grid>
+                                                        </Frame>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
                                         </Grid>
                                     </Grid>
                                 </Frame>
@@ -106,27 +137,45 @@
             </Frame>
 
             <!-- Right side bar -->
-            <Frame Grid.Column="1" Padding="0" CornerRadius="0" BorderColor="#88AFAFAF" BackgroundColor="Transparent" Margin="-1, 0, 0, 0">
-                <Grid ColumnDefinitions="*" RowDefinitions="*, 65">
-                    <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="0" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged"
-                                    >
+            <Frame Grid.Column="1" Padding="10" CornerRadius="0" BorderColor="#88AFAFAF" BackgroundColor="Transparent" Margin="-1, 0, 0, 0">
+                <Grid ColumnDefinitions="*" RowDefinitions="50, *, 65">
+
+                    <!-- Top description and search -->
+                    <VerticalStackLayout Grid.Row="0">
+                        <Label Text="Employees" TextColor="#CC999999" FontAttributes="Italic" HorizontalOptions="End" HeightRequest="20" Margin="0,0,10,0"/>
+                        <Entry Placeholder="Search by employee name..." PlaceholderColor="#999999" HeightRequest="25" VerticalOptions="End" FontAttributes="Italic" FontSize="16" Margin="0" TextChanged="SearchEmployeeByName_TextChanged"/>
+                    </VerticalStackLayout>
+
+                    <!-- All Employees -->
+                    <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="1" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:Employee">
                                 <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF">
+
+                                    <!-- Right click menu-->
+                                    <FlyoutBase.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="Edit Employee"/>
+                                            <MenuFlyoutItem Text="Remove Employee"/>
+                                        </MenuFlyout>
+                                    </FlyoutBase.ContextFlyout>
+
                                     <Grid ColumnDefinitions="*" RowDefinitions="20, 20" Padding="0" Margin="0">
                                         <Label Text="{Binding FirstName}" Grid.Row="0"/>
                                         <Label Text="{Binding LastName}" Grid.Row="1"/>
                                     </Grid>
 
+                                    <!-- Drag Gesture Start -->
                                     <Frame.GestureRecognizers>
-                                        <DragGestureRecognizer CanDrag="True" DragStarting="DragGestureRecognizer_DragStarting"/>
+                                        <DragGestureRecognizer CanDrag="True" DragStarting="DragStartEmployee"/>
                                     </Frame.GestureRecognizers>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
-                    <Button Grid.Row="1" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Command="{Binding AddEmployeeCommand}" Margin="0, 0, 15, 15"/>
+                    <!-- Add Employee Button -->
+                    <Button Grid.Row="2" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Command="{Binding AddEmployeeCommand}" Margin="0, 0, 15, 15"/>
                 </Grid>
             </Frame>
         </Grid>

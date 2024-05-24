@@ -69,6 +69,12 @@ namespace ProjectOOctopus.ViewModels
         }
 
         [RelayCommand]
+        private void SearchEmployeesByName(string name)
+        {
+            _employeesService.SearchByName(name);
+        }
+
+        [RelayCommand]
         private void RefreshEmployees()
         {
             Employees = _employeesService.Employees;

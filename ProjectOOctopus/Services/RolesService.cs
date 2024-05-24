@@ -7,6 +7,8 @@ namespace ProjectOOctopus.Services
     public class RolesService
     {
         public static event EventHandler<RoleAddedEventArgs>? RoleAddedEvent;
+        public static event EventHandler<RoleRemovedEventArgs>? RoleRemovedEvent;
+
 
         private string _currentSearch = string.Empty;
 
@@ -21,6 +23,13 @@ namespace ProjectOOctopus.Services
             TryAddEmployeeRoleNameCheck(role);
             RoleAddedEvent?.Invoke(this, new RoleAddedEventArgs(role));
             //add remove role event, make it so the dictionary in projectdata updates with this
+        }
+
+        public void RemoveRole(EmployeeRole role)
+        {
+            _allRoles.Remove(role);
+
+            RoleRemovedEvent?.Invoke(this, new RoleRemovedEventArgs(role));
         }
 
         public void SearchByName(string name)

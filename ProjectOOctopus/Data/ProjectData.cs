@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ProjectOOctopus.Events;
 using System.Collections.ObjectModel;
 
 namespace ProjectOOctopus.Data
@@ -9,15 +10,22 @@ namespace ProjectOOctopus.Data
         public string ProjectDescription { get; set; }
 
         [ObservableProperty]
-        private Dictionary<EmployeeRole, ObservableCollection<Employee>> _employeesByRoles;
-
-        [ObservableProperty]
-        private ObservableCollection<Employee> _assignedEmployees = new ObservableCollection<Employee>();
+        private ObservableCollection<AssignedRoleCollection> _employeesByRoles = new ObservableCollection<AssignedRoleCollection>();
 
         public ProjectData(string projectName, string projectDescription)
         {
             ProjectName = projectName;
             ProjectDescription = projectDescription;
+        }
+
+        public void OnNewEmployeeRoleAdded(object? sender, RoleAddedEventArgs e)
+        {
+            EmployeesByRoles.Add(new AssignedRoleCollection(e.Role));
+        }
+
+        public void OnNewEmployeeRoleRemoved(object? sender, RoleRemovedEventArgs e)
+        {
+            EmployeesByRoles.Remove(EmployeesByRoles.FirstOrDefault(n => n.Role == e.Role));
         }
 
         public override bool Equals(object? obj)
@@ -27,8 +35,7 @@ namespace ProjectOOctopus.Data
 
         public bool Equals(ProjectData? other)
         {
-            return other is not null &&
-                   ProjectName == other.ProjectName;
+            return other is not null && ProjectName == other.ProjectName;
         }
 
         public override int GetHashCode()

@@ -16,7 +16,16 @@ namespace ProjectOOctopus.Services
         {
             _allProjects.Add(project);
 
+            RolesService.RoleAddedEvent += project.OnNewEmployeeRoleAdded;
             TryAddEmployeeNameCheck(project);
+        }
+
+        public void RemoveProject(ProjectData project)
+        {
+            _allProjects.Remove(project);
+            Projects.Remove(project);
+
+            RolesService.RoleAddedEvent -= project.OnNewEmployeeRoleAdded;
         }
 
         public void SearchByName(string name)

@@ -32,7 +32,7 @@ namespace ProjectOOctopus
 
         }
 
-        private void DragGestureRecognizer_DragStarting(object sender, DragStartingEventArgs e)
+        private void DragStartEmployee(object sender, DragStartingEventArgs e)
         {
             e.Data.Properties.Add("Employee", (sender as DragGestureRecognizer).BindingContext as Employee);
         }
@@ -43,16 +43,31 @@ namespace ProjectOOctopus
             {
                 Employee emp = obj as Employee;
 
-                ProjectData project = (sender as DropGestureRecognizer).BindingContext as ProjectData;
-                project.AssignedEmployees.Add(emp);
+                AssignedRoleCollection assignedRoles = (sender as DropGestureRecognizer).BindingContext as AssignedRoleCollection;
+                assignedRoles.Add(emp);
             }
         }
 
-        private void Entry_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchProjectByName_TextChanged(object sender, TextChangedEventArgs e)
         {
             MainPageViewModel vm = BindingContext as MainPageViewModel;
             vm.SearchProjectsByNameCommand.Execute(e.NewTextValue);
         }
-    }
 
+        private void SearchEmployeeByName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            MainPageViewModel vm = BindingContext as MainPageViewModel;
+            vm.SearchEmployeesByNameCommand.Execute(e.NewTextValue);
+        }
+
+        private void DragStartEmployeeReAssign(object sender, DragStartingEventArgs e)
+        {
+            DragGestureRecognizer dragGestureRecognizer = sender as DragGestureRecognizer;
+            Employee employee = dragGestureRecognizer.BindingContext as Employee;
+            e.Data.Properties.Add("Employee", employee);
+
+            AssignedRoleCollection collection = dragGestureRecognizer.Parent.Parent.Parent.BindingContext as AssignedRoleCollection;
+            collection.Remove(employee);
+        }
+    }
 }

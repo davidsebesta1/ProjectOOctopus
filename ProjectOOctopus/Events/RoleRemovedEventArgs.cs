@@ -2,11 +2,11 @@
 
 namespace ProjectOOctopus.Events
 {
-    public class RoleAddedEventArgs : EventArgs
+    public class RoleRemovedEventArgs : EventArgs
     {
         public readonly EmployeeRole Role;
 
-        public RoleAddedEventArgs(EmployeeRole role)
+        public RoleRemovedEventArgs(EmployeeRole role)
         {
             Role = role;
         }

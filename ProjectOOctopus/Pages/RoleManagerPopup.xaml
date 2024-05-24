@@ -21,6 +21,13 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="data:EmployeeRole">
                                     <Grid ColumnDefinitions="*, 60" HorizontalOptions="FillAndExpand" Padding="0">
+                                        <!-- Right click menu-->
+                                        <FlyoutBase.ContextFlyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Text="Hello"/>
+                                            </MenuFlyout>
+                                        </FlyoutBase.ContextFlyout>
+
                                         <Frame Grid.Column="0" BackgroundColor="#333333" CornerRadius="0" BorderColor="Transparent">
                                             <Label Text="{Binding Name}"/>
                                         </Frame>
