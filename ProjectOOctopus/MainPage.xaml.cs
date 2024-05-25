@@ -6,20 +6,18 @@ namespace ProjectOOctopus
 {
     public partial class MainPage : ContentPage
     {
-        private EmployeesService _employeesService;
+        private MainPageViewModel _viewModel;
 
-        public MainPage(MainPageViewModel vm, EmployeesService service)
+        public MainPage(MainPageViewModel vm)
         {
             InitializeComponent();
             BindingContext = vm;
-            _employeesService = service;
+            _viewModel = vm;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
-            MainPageViewModel vm = BindingContext as MainPageViewModel;
         }
 
         private void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -50,14 +48,12 @@ namespace ProjectOOctopus
 
         private void SearchProjectByName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            MainPageViewModel vm = BindingContext as MainPageViewModel;
-            vm.SearchProjectsByNameCommand.Execute(e.NewTextValue);
+            _viewModel.SearchProjectsByNameCommand.Execute(e.NewTextValue);
         }
 
         private void SearchEmployeeByName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            MainPageViewModel vm = BindingContext as MainPageViewModel;
-            vm.SearchEmployeesByNameCommand.Execute(e.NewTextValue);
+            _viewModel.SearchEmployeesByNameCommand.Execute(e.NewTextValue);
         }
 
         private void DragStartEmployeeReAssign(object sender, DragStartingEventArgs e)
@@ -68,6 +64,16 @@ namespace ProjectOOctopus
 
             AssignedRoleCollection collection = dragGestureRecognizer.Parent.Parent.Parent.BindingContext as AssignedRoleCollection;
             collection.Remove(employee);
+        }
+
+        private void EditEmployeeFlyout_Clicked(object sender, EventArgs e)
+        {
+            _viewModel.EditEmployeeCommand.Execute((sender as MenuFlyoutItem).Parent.Parent.BindingContext as Employee);
+        }
+
+        private void RemoveEmployeeFlyout_Clicked(object sender, EventArgs e)
+        {
+            _viewModel.RemoveEmployeeCommand.Execute((sender as MenuFlyoutItem).Parent.Parent.BindingContext as Employee);
         }
     }
 }

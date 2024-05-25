@@ -6,8 +6,11 @@ namespace ProjectOOctopus.Data
 {
     public partial class ProjectData : ObservableObject, IEquatable<ProjectData?>
     {
-        public string ProjectName { get; set; }
-        public string ProjectDescription { get; set; }
+        [ObservableProperty]
+        private string _projectName;
+
+        [ObservableProperty]
+        private string _projectDescription;
 
         [ObservableProperty]
         private ObservableCollection<AssignedRoleCollection> _employeesByRoles = new ObservableCollection<AssignedRoleCollection>();

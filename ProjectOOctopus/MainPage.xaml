@@ -49,8 +49,8 @@
                                     <FlyoutBase.ContextFlyout>
                                         <MenuFlyout>
                                             <MenuFlyoutItem Text="Add Role Group"/>
-                                            <MenuFlyoutItem Text="Edit Project"/>
-                                            <MenuFlyoutItem Text="Remove Project"/>
+                                            <MenuFlyoutItem Text="Edit Project" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=EditProjectCommand}" CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type Frame}, AncestorLevel=1}, Path=BindingContext}"/>
+                                            <MenuFlyoutItem Text="Remove Project" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=RemoveProjectCommand}" CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type Frame}, AncestorLevel=1}, Path=BindingContext}"/>
                                         </MenuFlyout>
                                     </FlyoutBase.ContextFlyout>
 
@@ -102,13 +102,6 @@
                                                                             <HorizontalStackLayout HeightRequest="50">
                                                                                 <Frame Padding="0" Margin="0" CornerRadius="15" BackgroundColor="#EEEEEE" BorderColor="#22000000">
 
-                                                                                    <!-- Right click menu-->
-                                                                                    <FlyoutBase.ContextFlyout>
-                                                                                        <MenuFlyout>
-                                                                                            <MenuFlyoutItem Text="Remove"/>
-                                                                                        </MenuFlyout>
-                                                                                    </FlyoutBase.ContextFlyout>
-
                                                                                     <!-- Drag Gesture Start -->
                                                                                     <Frame.GestureRecognizers>
                                                                                         <DragGestureRecognizer CanDrag="True" DragStarting="DragStartEmployeeReAssign"/>
@@ -155,8 +148,8 @@
                                     <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>
                                         <MenuFlyout>
-                                            <MenuFlyoutItem Text="Edit Employee"/>
-                                            <MenuFlyoutItem Text="Remove Employee"/>
+                                            <MenuFlyoutItem Text="Edit Employee" Clicked="EditEmployeeFlyout_Clicked"/>
+                                            <MenuFlyoutItem Text="Remove Employee" Clicked="RemoveEmployeeFlyout_Clicked"/>
                                         </MenuFlyout>
                                     </FlyoutBase.ContextFlyout>
 
@@ -180,5 +173,4 @@
             </Frame>
         </Grid>
     </Frame>
-
 </ContentPage>

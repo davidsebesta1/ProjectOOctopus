@@ -1,9 +1,14 @@
-﻿namespace ProjectOOctopus.Data
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace ProjectOOctopus.Data
 {
-    public class Employee : IEquatable<Employee?>
+    public partial class Employee : ObservableObject, IEquatable<Employee?>
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        [ObservableProperty]
+        private string _firstName;
+
+        [ObservableProperty]
+        private string _lastName;
 
         public string FullName => FirstName + " " + LastName;
         public string Initials => FirstName[0] + LastName[0].ToString();

@@ -19,6 +19,12 @@ namespace ProjectOOctopus.Services
             TryAddEmployeeNameCheck(emp);
         }
 
+        public void RemoveEmployee(Employee project)
+        {
+            _allEmployees.Remove(project);
+            Employees.Remove(project);
+        }
+
         public void SearchByName(string name)
         {
             _currentSearch = name;

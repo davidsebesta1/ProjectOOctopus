@@ -36,8 +36,8 @@ namespace ProjectOOctopus.ViewModels
 
             _roleManagerPopup = roleManagerPopup;
 
-            RefreshEmployees();
-            RefreshProjects();
+            Projects = _projectsService.Projects;
+            Employees = _employeesService.Employees;
         }
 
         #endregion
@@ -53,13 +53,37 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         private async Task AddEmployee()
         {
-            await MopupService.Instance.PushAsync(new AddEmployeePopup(_employeesService));
+            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService));
+        }
+
+        [RelayCommand]
+        private async Task EditEmployee(Employee employee)
+        {
+            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, employee));
         }
 
         [RelayCommand]
         private async Task AddProject()
         {
-            await MopupService.Instance.PushAsync(new AddProjectPopup(_projectsService));
+            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService));
+        }
+
+        [RelayCommand]
+        private async Task EditProject(ProjectData project)
+        {
+            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, project));
+        }
+
+        [RelayCommand]
+        private void RemoveEmployee(Employee employee)
+        {
+            _employeesService.RemoveEmployee(employee);
+        }
+
+        [RelayCommand]
+        private void RemoveProject(ProjectData project)
+        {
+            _projectsService.RemoveProject(project);
         }
 
         [RelayCommand]
@@ -72,18 +96,6 @@ namespace ProjectOOctopus.ViewModels
         private void SearchEmployeesByName(string name)
         {
             _employeesService.SearchByName(name);
-        }
-
-        [RelayCommand]
-        private void RefreshEmployees()
-        {
-            Employees = _employeesService.Employees;
-        }
-
-        [RelayCommand]
-        private void RefreshProjects()
-        {
-            Projects = _projectsService.Projects;
         }
 
         [RelayCommand]
