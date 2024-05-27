@@ -17,7 +17,7 @@ namespace ProjectOOctopus.Services
             _allProjects.Add(project);
 
             RolesService.RoleAddedEvent += project.OnNewEmployeeRoleAdded;
-            TryAddEmployeeNameCheck(project);
+            TryAddEmployeeByNameFilter(project);
         }
 
         public void RemoveProject(ProjectData project)
@@ -26,6 +26,15 @@ namespace ProjectOOctopus.Services
             Projects.Remove(project);
 
             RolesService.RoleAddedEvent -= project.OnNewEmployeeRoleAdded;
+            project.Dispose();
+        }
+
+        public void RemoveEmployeeFromAllProjects(Employee employee)
+        {
+            foreach (ProjectData project in _allProjects)
+            {
+                project.RemoveEmployeeFromAllRoles(employee);
+            }
         }
 
         public void SearchByName(string name)
@@ -45,11 +54,11 @@ namespace ProjectOOctopus.Services
             Projects.Clear();
             foreach (ProjectData emp in _allProjects)
             {
-                TryAddEmployeeNameCheck(emp);
+                TryAddEmployeeByNameFilter(emp);
             }
         }
 
-        private void TryAddEmployeeNameCheck(ProjectData project)
+        private void TryAddEmployeeByNameFilter(ProjectData project)
         {
             if (project.ProjectName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
             {

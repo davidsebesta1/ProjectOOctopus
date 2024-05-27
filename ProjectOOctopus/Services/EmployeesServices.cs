@@ -5,24 +5,33 @@ namespace ProjectOOctopus.Services
 {
     public class EmployeesService
     {
-        public EmployeesService() { }
+        private ProjectsService _projectsService;
+
+        public EmployeesService(ProjectsService projectsService)
+        {
+            _projectsService = projectsService;
+        }
 
         private string _currentSearch = string.Empty;
 
         private readonly ObservableCollection<Employee> _allEmployees = new ObservableCollection<Employee>();
         public ObservableCollection<Employee> Employees { get; private set; } = new ObservableCollection<Employee>();
 
-        public void AddEmployee(Employee emp)
+        public void AddEmployee(Employee employee)
         {
-            _allEmployees.Add(emp);
+            _allEmployees.Add(employee);
 
-            TryAddEmployeeNameCheck(emp);
+            TryAddEmployeeByNameFilter(employee);
         }
 
-        public void RemoveEmployee(Employee project)
+        public void RemoveEmployee(Employee employee)
         {
-            _allEmployees.Remove(project);
-            Employees.Remove(project);
+            _allEmployees.Remove(employee);
+            Employees.Remove(employee);
+
+            _projectsService.RemoveEmployeeFromAllProjects(employee);
+
+            employee.Dispose();
         }
 
         public void SearchByName(string name)
@@ -42,15 +51,15 @@ namespace ProjectOOctopus.Services
             Employees.Clear();
             foreach (Employee emp in _allEmployees)
             {
-                TryAddEmployeeNameCheck(emp);
+                TryAddEmployeeByNameFilter(emp);
             }
         }
 
-        private void TryAddEmployeeNameCheck(Employee emp)
+        private void TryAddEmployeeByNameFilter(Employee employee)
         {
-            if (emp.FullName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
+            if (employee.FullName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
             {
-                Employees.Add(emp);
+                Employees.Add(employee);
             }
         }
     }

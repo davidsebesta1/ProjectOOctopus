@@ -5,17 +5,22 @@
              xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
              BackgroundColor="#88000000"
              Title="AssignEmployeePopup">
-    <ScrollView WidthRequest="350" HeightRequest="500" BackgroundColor="#EE333333">
+    <Frame WidthRequest="350" HeightRequest="350" BackgroundColor="#EE333333" Padding="5">
         <VerticalStackLayout Padding="10" BackgroundColor="#444444">
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="Assignement Usage*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="AssignPercEntry" Keyboard="Numeric" TextColor="White" FontSize="16"/>
-                    <Label x:Name="AssignPercErrText" Text="Name must be filled" IsVisible="False"  TextColor="#FF5555"/>
+                    <Label x:Name="CurrentAssignementUsageText" FontSize="16" TextColor="White" FontAttributes="Italic"/>
+                    <HorizontalStackLayout Padding="0" Margin="0" BackgroundColor="Transparent">
+                        <Entry x:Name="AssignPercEntry" Keyboard="Numeric" TextColor="White" FontSize="16" TextChanged="AssignPercEntry_TextChanged" WidthRequest="250"/>
+                        <Label Text="%" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                    </HorizontalStackLayout>
+                    <Label x:Name="AssignPercErrText" Text="Please enter a number between 0 and 100" IsVisible="False"  TextColor="#FF5555"/>
+                    <Label x:Name="AssignPercWarningText" Text="Warning, total assignment with this value will be above 100%" IsVisible="False"  TextColor="#FFEE00"/>
                 </StackLayout>
             </Frame>
 
             <Button x:Name="AddOrEditButton" Text="Add" Grid.Column="0" WidthRequest="150" HeightRequest="50" Margin="0, 25, 0, 0" Clicked="AddOrEditButton_Clicked"/>
         </VerticalStackLayout>
-    </ScrollView>
+    </Frame>
 </mopups:PopupPage>

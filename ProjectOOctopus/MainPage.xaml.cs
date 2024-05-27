@@ -1,4 +1,6 @@
-﻿using ProjectOOctopus.Data;
+﻿using Mopups.Services;
+using ProjectOOctopus.Data;
+using ProjectOOctopus.Pages;
 using ProjectOOctopus.Services;
 using ProjectOOctopus.ViewModels;
 
@@ -35,14 +37,17 @@ namespace ProjectOOctopus
             e.Data.Properties.Add("Employee", (sender as DragGestureRecognizer).BindingContext as Employee);
         }
 
-        private void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
+        private async void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
         {
             if (e.Data.Properties.TryGetValue("Employee", out var obj))
             {
-                Employee emp = obj as Employee;
+                DropGestureRecognizer dropGestureRecognizer = sender as DropGestureRecognizer;
 
-                AssignedRoleCollection assignedRoles = (sender as DropGestureRecognizer).BindingContext as AssignedRoleCollection;
-                assignedRoles.Add(emp);
+                Employee emp = obj as Employee;
+                AssignedRoleCollection assignedRoles = dropGestureRecognizer.BindingContext as AssignedRoleCollection;
+                ProjectData data = dropGestureRecognizer.Parent.Parent.Parent.BindingContext as ProjectData;
+
+                await MopupService.Instance.PushAsync(new AssignEmployeePopup(emp, data, assignedRoles));
             }
         }
 

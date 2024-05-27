@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace ProjectOOctopus.Data
 {
-    public partial class ProjectData : ObservableObject, IEquatable<ProjectData?>
+    public partial class ProjectData : ObservableObject, IEquatable<ProjectData?>, IDisposable
     {
         [ObservableProperty]
         private string _projectName;
@@ -31,6 +31,20 @@ namespace ProjectOOctopus.Data
             EmployeesByRoles.Remove(EmployeesByRoles.FirstOrDefault(n => n.Role == e.Role));
         }
 
+        public void RemoveEmployeeFromAllRoles(Employee employee)
+        {
+            foreach (AssignedRoleCollection role in EmployeesByRoles)
+            {
+                role.Remove(employee);
+            }
+        }
+
+        public void Dispose()
+        {
+            _employeesByRoles.Clear();
+            _employeesByRoles = null;
+        }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as ProjectData);
@@ -45,6 +59,7 @@ namespace ProjectOOctopus.Data
         {
             return HashCode.Combine(ProjectName);
         }
+
 
         public static bool operator ==(ProjectData? left, ProjectData? right)
         {

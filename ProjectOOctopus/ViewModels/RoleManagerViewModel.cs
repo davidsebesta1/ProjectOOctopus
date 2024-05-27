@@ -10,7 +10,7 @@ namespace ProjectOOctopus.ViewModels
 {
     public partial class RoleManagerViewModel : ObservableObject
     {
-        private readonly RolesService _rolesService;
+        public readonly RolesService _rolesService;
 
         [ObservableProperty]
         private ObservableCollection<EmployeeRole> _roles;

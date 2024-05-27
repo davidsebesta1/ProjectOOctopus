@@ -143,7 +143,7 @@
                     <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="1" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:Employee">
-                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF">
+                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF" CornerRadius="5" Padding="0">
 
                                     <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>
@@ -153,9 +153,24 @@
                                         </MenuFlyout>
                                     </FlyoutBase.ContextFlyout>
 
-                                    <Grid ColumnDefinitions="*" RowDefinitions="20, 20" Padding="0" Margin="0">
-                                        <Label Text="{Binding FirstName}" Grid.Row="0"/>
-                                        <Label Text="{Binding LastName}" Grid.Row="1"/>
+                                    <Grid ColumnDefinitions="210,70">
+
+                                        <Grid Grid.Column="0" VerticalOptions="Center" ColumnDefinitions="*" RowDefinitions="20, 20" Padding="0" Margin="15,0,0,0">
+                                            <Label Text="{Binding FirstName}" Grid.Row="0"/>
+                                            <Label Text="{Binding LastName}" Grid.Row="1"/>
+                                        </Grid>
+
+                                        <CollectionView Grid.Column="1" ItemsSource="{Binding Roles}" VerticalScrollBarVisibility="Never" HeightRequest="60" Margin="0" HorizontalOptions="End" ToolTipProperties.Text="{Binding RolesToolTip}">
+                                            <CollectionView.ItemsLayout>
+                                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="0"/>
+                                            </CollectionView.ItemsLayout>
+
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate x:DataType="data:EmployeeRole">
+                                                    <Frame BackgroundColor="{Binding Color}" HeightRequest="15" WidthRequest="15" CornerRadius="10" Padding="0" Margin="0" BorderColor="#44000000"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
                                     </Grid>
 
                                     <!-- Drag Gesture Start -->

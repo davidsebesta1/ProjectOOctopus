@@ -22,7 +22,7 @@ namespace ProjectOOctopus.ViewModels
         [ObservableProperty]
         private ObservableCollection<ProjectData> _projects;
 
-        private RoleManagerPopup _roleManagerPopup;
+        private readonly RoleManagerPopup _roleManagerPopup;
 
         #endregion
 
@@ -44,24 +44,36 @@ namespace ProjectOOctopus.ViewModels
 
         #region Commands
 
-        [RelayCommand]
-        private async Task AddEmployeeToProject(ProjectData project)
-        {
-            await MopupService.Instance.PushAsync(new AssignEmployeePopup(project));
-        }
+        #region Employee
 
         [RelayCommand]
         private async Task AddEmployee()
         {
-            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService));
+            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, _rolesService));
         }
 
         [RelayCommand]
         private async Task EditEmployee(Employee employee)
         {
-            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, employee));
+            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, _rolesService, employee));
         }
 
+        [RelayCommand]
+        private async Task RemoveEmployee(Employee employee)
+        {
+            bool confirm = await Shell.Current.DisplayAlert("Confirmation", $"Are you sure you want to delete {employee.FullName}? This action cannot be undone", "Yes", "No");
+            if (confirm) _employeesService.RemoveEmployee(employee);
+        }
+
+        [RelayCommand]
+        private void SearchEmployeesByName(string name)
+        {
+            _employeesService.SearchByName(name);
+        }
+
+        #endregion
+
+        #region Project
         [RelayCommand]
         private async Task AddProject()
         {
@@ -75,15 +87,10 @@ namespace ProjectOOctopus.ViewModels
         }
 
         [RelayCommand]
-        private void RemoveEmployee(Employee employee)
+        private async Task RemoveProject(ProjectData project)
         {
-            _employeesService.RemoveEmployee(employee);
-        }
-
-        [RelayCommand]
-        private void RemoveProject(ProjectData project)
-        {
-            _projectsService.RemoveProject(project);
+            bool confirm = await Shell.Current.DisplayAlert("Confirmation", $"Are you sure you want to delete {project.ProjectName}? This action cannot be undone", "Yes", "No");
+            if (confirm) _projectsService.RemoveProject(project);
         }
 
         [RelayCommand]
@@ -92,11 +99,7 @@ namespace ProjectOOctopus.ViewModels
             _projectsService.SearchByName(name);
         }
 
-        [RelayCommand]
-        private void SearchEmployeesByName(string name)
-        {
-            _employeesService.SearchByName(name);
-        }
+        #endregion
 
         [RelayCommand]
         private async Task OpenRoleManager()

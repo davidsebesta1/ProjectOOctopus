@@ -14,6 +14,11 @@ namespace ProjectOOctopus.Data
             Color = color;
         }
 
+        public override string? ToString()
+        {
+            return Name;
+        }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as EmployeeRole);
