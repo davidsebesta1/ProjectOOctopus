@@ -12,7 +12,7 @@
                     <Label Text="Assignement Usage*" FontSize="18" TextColor="White"/>
                     <Label x:Name="CurrentAssignementUsageText" FontSize="16" TextColor="White" FontAttributes="Italic"/>
                     <HorizontalStackLayout Padding="0" Margin="0" BackgroundColor="Transparent">
-                        <Entry x:Name="AssignPercEntry" Keyboard="Numeric" TextColor="White" FontSize="16" TextChanged="AssignPercEntry_TextChanged" WidthRequest="250"/>
+                        <Entry x:Name="AssignPercEntry" Keyboard="Numeric" TextColor="White" FontSize="16" TextChanged="AssignPercEntry_TextChanged" WidthRequest="250" Completed="AssignPercEntry_Completed"/>
                         <Label Text="%" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                     </HorizontalStackLayout>
                     <Label x:Name="AssignPercErrText" Text="Please enter a number between 0 and 100" IsVisible="False"  TextColor="#FF5555"/>

@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Runtime.CompilerServices;
 
 namespace ProjectOOctopus.Data
 {
@@ -18,10 +16,9 @@ namespace ProjectOOctopus.Data
         [NotifyPropertyChangedFor(nameof(Initials))]
         private string _lastName;
 
-
         [ObservableProperty]
         private int _totalAssignmentUsage;
-        private Dictionary<ProjectData, int> _assignmentsPerctangeByProject = new Dictionary<ProjectData, int>();
+        private Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>> _assignmentsPerctangeByProject = new Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>>();
 
         [ObservableProperty]
         private ObservableCollection<EmployeeRole> _roles;
@@ -45,23 +42,26 @@ namespace ProjectOOctopus.Data
             }
         }
 
-        public void SetAssigmentUsage(ProjectData project, byte usage)
+        public void SetAssigmentUsage(ProjectData project, AssignedRoleCollection group, int usage)
         {
-            if (_assignmentsPerctangeByProject.ContainsKey(project))
+            if (_assignmentsPerctangeByProject.TryGetValue(project, out var innerDir))
             {
-                _assignmentsPerctangeByProject[project] = usage;
+                if (!innerDir.TryAdd(group, usage))
+                {
+                    innerDir[group] = usage;
+                }
             }
             else
             {
-                _assignmentsPerctangeByProject.Add(project, usage);
+                _assignmentsPerctangeByProject.Add(project, new Dictionary<AssignedRoleCollection, int>() { { group, usage } });
             }
 
-            TotalAssignmentUsage = (byte)_assignmentsPerctangeByProject.Sum(n => n.Value);
+            TotalAssignmentUsage = (byte)_assignmentsPerctangeByProject.SelectMany(n => n.Value).Select(n => n.Value).Sum();
         }
 
-        public int GetAssignentUsage(ProjectData data)
+        public int GetAssignentUsage(ProjectData data, AssignedRoleCollection group)
         {
-            if (_assignmentsPerctangeByProject.TryGetValue(data, out int usage))
+            if (_assignmentsPerctangeByProject.TryGetValue(data, out var groups) && groups.TryGetValue(group, out int usage))
             {
                 return usage;
             }
@@ -108,6 +108,8 @@ namespace ProjectOOctopus.Data
 
             Roles.Clear();
             Roles = null;
+
+            GC.SuppressFinalize(this);
         }
 
         public static bool operator ==(Employee? left, Employee? right)

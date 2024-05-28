@@ -27,5 +27,18 @@ namespace ProjectOOctopus.ViewModels
         {
             await MopupService.Instance.PushAsync(new AddOrEditRolePopup(_rolesService));
         }
+
+        [RelayCommand]
+        public async Task EditRole(EmployeeRole role)
+        {
+            await MopupService.Instance.PushAsync(new AddOrEditRolePopup(_rolesService, role));
+        }
+
+        [RelayCommand]
+        public async Task RemoveRole(EmployeeRole role)
+        {
+            bool res = await Shell.Current.DisplayAlert("Confirmation", $"Are you sure you want to delete \"{role.Name}\" role? This cannot be undone", "Yes", "No");
+            if (res) _rolesService.RemoveRole(role);
+        }
     }
 }

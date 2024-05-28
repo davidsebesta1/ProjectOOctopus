@@ -44,7 +44,6 @@ public partial class AddOrEditEmployeePopup : PopupPage
                 //Frame el = RolesCollectionView.GetVisualTreeDescendants().First(n => (n as Frame)?.BindingContext == role) as Frame;
                 //VisualStateManager.GoToState(el, "Selected");
             }
-
         }
     }
 

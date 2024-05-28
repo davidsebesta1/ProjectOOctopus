@@ -39,10 +39,34 @@ namespace ProjectOOctopus.Data
             }
         }
 
+        public void AddRoleGroup(EmployeeRole role)
+        {
+            if (EmployeesByRoles.Any(n => n.Role == role))
+            {
+                return;
+            }
+
+            EmployeesByRoles.Add(new AssignedRoleCollection(role));
+        }
+
+        public void RemoveRoleGroup(EmployeeRole role)
+        {
+            AssignedRoleCollection collection = EmployeesByRoles.FirstOrDefault(n => n.Role == role);
+            if (collection == null)
+            {
+                return;
+            }
+
+            collection.Clear();
+            EmployeesByRoles.Remove(collection);
+        }
+
         public void Dispose()
         {
-            _employeesByRoles.Clear();
-            _employeesByRoles = null;
+            EmployeesByRoles?.Clear();
+            EmployeesByRoles = null;
+
+            GC.SuppressFinalize(this);
         }
 
         public override bool Equals(object? obj)

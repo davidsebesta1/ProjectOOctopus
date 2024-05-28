@@ -1,12 +1,15 @@
 ﻿
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace ProjectOOctopus.Data
 {
-    public class EmployeeRole : IEquatable<EmployeeRole?>
+    public partial class EmployeeRole : ObservableObject, IEquatable<EmployeeRole?>
     {
-        public string Name { get; set; }
-        public Color Color { get; set; }
+        [ObservableProperty]
+        public string _name;
 
-        public static Color LastColor { get; set; } = Color.FromHsv(0f, 1f, 0.8f);
+        [ObservableProperty]
+        public Color _color;
 
         public EmployeeRole(string name, Color color)
         {

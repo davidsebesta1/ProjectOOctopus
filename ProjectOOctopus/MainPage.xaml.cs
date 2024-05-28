@@ -1,7 +1,6 @@
 ﻿using Mopups.Services;
 using ProjectOOctopus.Data;
 using ProjectOOctopus.Pages;
-using ProjectOOctopus.Services;
 using ProjectOOctopus.ViewModels;
 
 namespace ProjectOOctopus
@@ -17,9 +16,11 @@ namespace ProjectOOctopus
             _viewModel = vm;
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
+
+            await _viewModel.LoadBaseRolesCommand.ExecuteAsync(null);
         }
 
         private void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -29,7 +30,6 @@ namespace ProjectOOctopus
             ProjectData selected = e.CurrentSelection[0] as ProjectData;
 
             return;
-
         }
 
         private void DragStartEmployee(object sender, DragStartingEventArgs e)

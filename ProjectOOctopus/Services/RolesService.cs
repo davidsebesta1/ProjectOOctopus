@@ -6,30 +6,47 @@ namespace ProjectOOctopus.Services
 {
     public class RolesService
     {
-        public static event EventHandler<RoleAddedEventArgs>? RoleAddedEvent;
         public static event EventHandler<RoleRemovedEventArgs>? RoleRemovedEvent;
-
 
         private string _currentSearch = string.Empty;
 
         private readonly ObservableCollection<EmployeeRole> _allRoles = new ObservableCollection<EmployeeRole>();
         public ObservableCollection<EmployeeRole> Roles { get; private set; } = new ObservableCollection<EmployeeRole>();
 
+        private readonly CsvLoader _csvLoader;
+
+        public RolesService(CsvLoader loader)
+        {
+            _csvLoader = loader;
+        }
+
+        public async Task LoadBaseRoles()
+        {
+            await foreach (EmployeeRole role in _csvLoader.LoadBaseRoles())
+            {
+                AddRole(role);
+            }
+        }
 
         public void AddRole(EmployeeRole role)
         {
             _allRoles.Add(role);
 
             TryAddEmployeeRoleNameCheck(role);
-            RoleAddedEvent?.Invoke(this, new RoleAddedEventArgs(role));
-            //add remove role event, make it so the dictionary in projectdata updates with this
         }
 
         public void RemoveRole(EmployeeRole role)
         {
             _allRoles.Remove(role);
+            Roles.Remove(role);
 
             RoleRemovedEvent?.Invoke(this, new RoleRemovedEventArgs(role));
+        }
+
+        public void ClearAllRoles()
+        {
+            _allRoles.Clear();
+            Roles.Clear();
         }
 
         public void SearchByName(string name)

@@ -8,11 +8,39 @@
     <ScrollView WidthRequest="350" HeightRequest="500" BackgroundColor="#EE333333">
         <VerticalStackLayout Padding="10" BackgroundColor="#444444">
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
-                <StackLayout Padding="5">
+                <VerticalStackLayout Padding="5">
                     <Label Text="Role Name*" FontSize="18" TextColor="White"/>
                     <Entry x:Name="RoleNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
                     <Label x:Name="RoleErrText" Text="Role Name must be filled" IsVisible="False" TextColor="#FF5555"/>
-                </StackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
+                <VerticalStackLayout Padding="5">
+                    <Label Text="Color*" FontSize="18" TextColor="White"/>
+
+
+                    <Grid ColumnDefinitions="150,100">
+                        <VerticalStackLayout Grid.Column="0">
+                            <HorizontalStackLayout Padding="0" Margin="0">
+                                <Label Text="R" TextColor="#FF0000" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                <Slider WidthRequest="100" x:Name="RedSlider" Minimum="0" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Padding="0" Margin="0">
+                                <Label Text="G" TextColor="#00FF00"/>
+                                <Slider WidthRequest="100" x:Name="GreenSlider" Minimum="0" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Padding="0" Margin="0">
+                                <Label Text="B" TextColor="#0000FF"/>
+                                <Slider WidthRequest="100" x:Name="BlueSlider" Minimum="0" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <Frame Grid.Column="1" x:Name="PreviewColorFrame" HeightRequest="100" WidthRequest="100"/>
+                    </Grid>
+                </VerticalStackLayout>
             </Frame>
 
             <Button x:Name="AddOrEditButton" Text="Add" Grid.Column="0" WidthRequest="150" HeightRequest="50" Margin="0, 25, 0, 0" Clicked="AddOrEditButton_Clicked"/>

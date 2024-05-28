@@ -16,7 +16,6 @@ namespace ProjectOOctopus.Services
         {
             _allProjects.Add(project);
 
-            RolesService.RoleAddedEvent += project.OnNewEmployeeRoleAdded;
             TryAddEmployeeByNameFilter(project);
         }
 
@@ -25,7 +24,6 @@ namespace ProjectOOctopus.Services
             _allProjects.Remove(project);
             Projects.Remove(project);
 
-            RolesService.RoleAddedEvent -= project.OnNewEmployeeRoleAdded;
             project.Dispose();
         }
 

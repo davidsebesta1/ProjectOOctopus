@@ -77,13 +77,13 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         private async Task AddProject()
         {
-            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService));
+            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, _rolesService));
         }
 
         [RelayCommand]
         private async Task EditProject(ProjectData project)
         {
-            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, project));
+            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, _rolesService, project));
         }
 
         [RelayCommand]
@@ -105,6 +105,12 @@ namespace ProjectOOctopus.ViewModels
         private async Task OpenRoleManager()
         {
             await MopupService.Instance.PushAsync(_roleManagerPopup);
+        }
+
+        [RelayCommand]
+        private async Task LoadBaseRoles()
+        {
+            await _rolesService.LoadBaseRoles();
         }
 
         #endregion

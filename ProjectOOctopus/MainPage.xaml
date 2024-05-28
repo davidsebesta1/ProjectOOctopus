@@ -35,7 +35,6 @@
 
 
                     <CollectionView ItemsSource="{Binding Projects}" Grid.Row="1">
-
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
                         </CollectionView.ItemsLayout>
@@ -64,7 +63,7 @@
 
                                         <!-- Employees by roles -->
                                         <Grid Grid.Row="1" HeightRequest="200">
-                                            <CollectionView ItemsSource="{Binding EmployeesByRoles}">
+                                            <CollectionView ItemsSource="{Binding EmployeesByRoles}" HorizontalScrollBarVisibility="Never">
                                                 <CollectionView.ItemsLayout>
                                                     <LinearItemsLayout Orientation="Horizontal" ItemSpacing="5"/>
                                                 </CollectionView.ItemsLayout>
@@ -141,6 +140,10 @@
 
                     <!-- All Employees -->
                     <CollectionView ItemsSource="{Binding Employees}" Margin="15" Grid.Row="1" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
+                        </CollectionView.ItemsLayout>
+
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:Employee">
                                 <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF" CornerRadius="5" Padding="0">

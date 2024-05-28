@@ -32,6 +32,7 @@ namespace ProjectOOctopus
             builder.Services.AddSingleton<EmployeesService>();
             builder.Services.AddSingleton<ProjectsService>();
             builder.Services.AddSingleton<RolesService>();
+            builder.Services.AddSingleton<CsvLoader>();
 
             builder.Services.AddTransient<MainPage>();
 
