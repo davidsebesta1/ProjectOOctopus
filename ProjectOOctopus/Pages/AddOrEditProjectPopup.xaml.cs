@@ -46,10 +46,11 @@ public partial class AddOrEditProjectPopup : PopupPage
             {
                 RolesCollectionView.SelectedItems.Add(role);
 
-                var tree = RolesCollectionView.GetVisualTreeDescendants();
-                Element el = (Element)tree.First(n => (n as Element)?.BindingContext as RoleGroupEntryData == role);
-                Entry entry = el.FindByName("TargetAmountEntry") as Entry;
-                entry.Text = role.TargetAmount.ToString();
+                Entry entry = GetEntryElementByData(role);
+                if (entry != null)
+                {
+                    entry.Text = role.TargetAmount.ToString();
+                }
             }
         }
     }
@@ -79,7 +80,8 @@ public partial class AddOrEditProjectPopup : PopupPage
             //Handle edited
             foreach (AssignedRoleCollection assignedCollection in editedGroups)
             {
-                assignedCollection.TargetCount = int.Parse(GetEntryElementByData(new RoleGroupEntryData(assignedCollection.Role, 0)).Text);
+                Entry entry = GetEntryElementByData(new RoleGroupEntryData(assignedCollection.Role, 0));
+                if (entry != null) assignedCollection.TargetCount = int.Parse(entry.Text);
             }
 
             //Handle added
@@ -99,7 +101,9 @@ public partial class AddOrEditProjectPopup : PopupPage
     private Entry GetEntryElementByData(RoleGroupEntryData data)
     {
         var tree = RolesCollectionView.GetVisualTreeDescendants();
-        Element el = (Element)tree.First(n => (n as Element)?.BindingContext as RoleGroupEntryData == data);
+        Element el = (Element)tree.FirstOrDefault(n => (n as Element)?.BindingContext as RoleGroupEntryData == data);
+        if (el == null) return null;
+
         Entry entry = el.FindByName("TargetAmountEntry") as Entry;
         return entry;
     }

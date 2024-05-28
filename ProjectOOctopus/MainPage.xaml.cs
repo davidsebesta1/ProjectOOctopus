@@ -24,54 +24,53 @@ namespace ProjectOOctopus
             await _viewModel.LoadBaseRolesCommand.ExecuteAsync(null);
         }
 
-        private void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.CurrentSelection == null || !e.CurrentSelection.Any()) return;
-
-            ProjectData selected = e.CurrentSelection[0] as ProjectData;
-
-            return;
-        }
-
         private void DragStartEmployee(object sender, DragStartingEventArgs e)
         {
-            e.Data.Properties.Add("Employee", (sender as DragGestureRecognizer).BindingContext as Employee);
+            IsBusy = true;
+            e.Data.Properties.Add("Employee", (Employee)((DragGestureRecognizer)sender).BindingContext);
         }
 
         private async void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
         {
             if (e.Data.Properties.TryGetValue("Employee", out object obj))
             {
-                DropGestureRecognizer dropGestureRecognizer = sender as DropGestureRecognizer;
+                DropGestureRecognizer dropGestureRecognizer = (DropGestureRecognizer)sender;
 
-                AssignedRoleCollection targetRoleGroup = dropGestureRecognizer.BindingContext as AssignedRoleCollection;
-                ProjectData targetProjectData = dropGestureRecognizer.GetParent(3).BindingContext as ProjectData;
-                Employee targetEmployee = obj as Employee;
+                AssignedRoleCollection targetRoleGroup = (AssignedRoleCollection)dropGestureRecognizer.BindingContext;
+                ProjectData targetProjectData = (ProjectData)dropGestureRecognizer.GetParent(3).BindingContext;
+                Employee targetEmployee = obj is Employee ? (Employee)obj : ((AssignedEmployeeData)obj).Employee;
 
-                if (targetRoleGroup.Contains(targetEmployee))
+                if (targetRoleGroup.Any(n => n.Employee == targetEmployee))
                 {
                     await Shell.Current.DisplayAlert("Error", "Unable to assign a one employee to the same project group twice in a single project", "Okay");
                     return;
                 }
 
-                if (e.Data.Properties.TryGetValue("OriginalGroup", out object group) && e.Data.Properties.TryGetValue("OriginalAssignmentUsage", out object usage) && group is AssignedRoleCollection originalCollection && originalCollection == targetRoleGroup)
+                if (e.Data.Properties.TryGetValue("OriginalGroup", out object group) && e.Data.Properties.TryGetValue("OriginalAssignmentUsage", out object usage) && e.Data.Properties.TryGetValue("OriginalProjectData", out object prData))
                 {
-                    int originalusage = (int)usage;
+                    AssignedRoleCollection originalCollection = (AssignedRoleCollection)group;
+                    ProjectData project = (ProjectData)prData;
 
-                    originalCollection.Add(targetEmployee, originalusage);
+                    if (targetProjectData == project && targetRoleGroup == originalCollection)
+                    {
+                        int originalusage = (int)usage;
 
-                    await Shell.Current.DisplayAlert("Error", "Unable to assign a one employee to the same project group twice in a single project", "Okay");
-                    return;
+                        originalCollection.Add(targetEmployee, originalusage);
+                        return;
+                    }
                 }
-
 
                 await MopupService.Instance.PushAsync(new AssignEmployeePopup(targetEmployee, targetProjectData, targetRoleGroup));
             }
+
+            IsBusy = false;
         }
 
         private void SearchProjectByName_TextChanged(object sender, TextChangedEventArgs e)
         {
+            IsBusy = true;
             _viewModel.SearchProjectsByNameCommand.Execute(e.NewTextValue);
+            IsBusy = false;
         }
 
         private void SearchEmployeeByName_TextChanged(object sender, TextChangedEventArgs e)
@@ -81,37 +80,44 @@ namespace ProjectOOctopus
 
         private void DragStartEmployeeReAssign(object sender, DragStartingEventArgs e)
         {
-            DragGestureRecognizer dragGestureRecognizer = sender as DragGestureRecognizer;
-            Employee employee = dragGestureRecognizer.BindingContext as Employee;
+            DragGestureRecognizer dragGestureRecognizer = (DragGestureRecognizer)sender;
+            AssignedEmployeeData employee = (AssignedEmployeeData)dragGestureRecognizer.BindingContext;
 
-            AssignedRoleCollection assignedRoleCollection = dragGestureRecognizer.GetParent(4).BindingContext as AssignedRoleCollection;
-            ProjectData data = dragGestureRecognizer.GetParent(7).BindingContext as ProjectData;
+            AssignedRoleCollection assignedRoleCollection = (AssignedRoleCollection)dragGestureRecognizer.GetParent(4).BindingContext;
+            ProjectData data = (ProjectData)dragGestureRecognizer.GetParent(7).BindingContext;
             e.Data.Properties.Add("Employee", employee);
             e.Data.Properties.Add("OriginalGroup", assignedRoleCollection);
-            e.Data.Properties.Add("OriginalAssignmentUsage", employee.GetAssignentUsage(data, assignedRoleCollection));
+            e.Data.Properties.Add("OriginalProject", data);
+            e.Data.Properties.Add("OriginalAssignmentUsage", employee.Employee.GetAssignentUsage(data, assignedRoleCollection));
 
-            AssignedRoleCollection collection = dragGestureRecognizer.GetParent(3).BindingContext as AssignedRoleCollection;
+            AssignedRoleCollection collection = (AssignedRoleCollection)dragGestureRecognizer.GetParent(3).BindingContext;
             collection.Remove(employee);
         }
 
         private async void EditEmployeeFlyout_Clicked(object sender, EventArgs e)
         {
+            IsBusy = true;
             await _viewModel.EditEmployeeCommand.ExecuteAsync((sender as MenuFlyoutItem).GetParent(2).BindingContext as Employee);
+            IsBusy = false;
         }
 
         private async void RemoveEmployeeFlyout_Clicked(object sender, EventArgs e)
         {
+            IsBusy = true;
             await _viewModel.RemoveEmployeeCommand.ExecuteAsync((sender as MenuFlyoutItem).GetParent(2).BindingContext as Employee);
+            IsBusy = false;
         }
 
         private void LocalGroupEmpLabel_Loaded(object sender, EventArgs e)
         {
-            Label label = sender as Label;
-            Employee emp = label.BindingContext as Employee;
-            AssignedRoleCollection col = label.GetParent(5).BindingContext as AssignedRoleCollection;
-            ProjectData data = label.GetParent(9).BindingContext as ProjectData;
+            IsBusy = true;
+            Label label = (Label)sender;
+            Employee emp = (Employee)label.BindingContext;
+            AssignedRoleCollection col = (AssignedRoleCollection)label.GetParent(5).BindingContext;
+            ProjectData data = (ProjectData)label.GetParent(9).BindingContext;
 
             label.Text = emp.GetAssignentUsage(data, col) + "%";
+            IsBusy = false;
         }
     }
 }

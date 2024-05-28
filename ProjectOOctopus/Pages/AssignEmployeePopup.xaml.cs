@@ -35,7 +35,7 @@ public partial class AssignEmployeePopup : PopupPage
         }
         else
         {
-            AssignPercEntry.Text = usage > 0 ? (remaining != 100 ? remaining.ToString() : "0") : "0";
+            AssignPercEntry.Text = remaining.ToString();
         }
 
         CurrentAssignementUsageText.Text = $"{usage}% currently assigned";

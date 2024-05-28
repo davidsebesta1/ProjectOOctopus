@@ -2,6 +2,7 @@
 using ProjectOOctopus.Events;
 using ProjectOOctopus.Services;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Data;
 
 namespace ProjectOOctopus.Data
@@ -15,7 +16,10 @@ namespace ProjectOOctopus.Data
         private string _projectDescription;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BackgroundColor))]
         private ObservableCollection<AssignedRoleCollection> _employeesByRoles = new ObservableCollection<AssignedRoleCollection>();
+
+        public Color BackgroundColor => EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99222222") : Color.FromHex("#88AFAFAF");
 
         public ProjectData(string projectName, string projectDescription)
         {
@@ -43,7 +47,10 @@ namespace ProjectOOctopus.Data
                 return;
             }
 
-            EmployeesByRoles.Add(new AssignedRoleCollection(role, this, targetCount));
+            AssignedRoleCollection collection = new AssignedRoleCollection(role, this, targetCount);
+            EmployeesByRoles.Add(collection);
+
+            collection.Employees.CollectionChanged += Employees_CollectionChanged;
 
             if (reorder)
             {
@@ -51,6 +58,12 @@ namespace ProjectOOctopus.Data
                 EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
             }
         }
+
+        private void Employees_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(BackgroundColor));
+        }
+
         private void AddRoleGroup(AssignedRoleCollection role, bool reorder = false)
         {
             EmployeesByRoles.Add(role);
@@ -81,12 +94,13 @@ namespace ProjectOOctopus.Data
                 return;
             }
 
-            foreach (Employee emp in collection)
+            foreach (Employee emp in collection.Select(n => n.Employee))
             {
                 emp.SetAssigmentUsage(collection.ProjectData, collection, 0);
             }
 
             EmployeesByRoles.Remove(collection);
+            collection.Employees.CollectionChanged -= Employees_CollectionChanged;
 
             if (reorder)
             {
@@ -128,14 +142,13 @@ namespace ProjectOOctopus.Data
 
         public bool Equals(ProjectData? other)
         {
-            return other is not null && ProjectName == other.ProjectName;
+            return other is not null && ProjectName == other.ProjectName && ProjectDescription == other.ProjectDescription;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ProjectName);
+            return HashCode.Combine(ProjectName, ProjectDescription);
         }
-
 
         public static bool operator ==(ProjectData? left, ProjectData? right)
         {
