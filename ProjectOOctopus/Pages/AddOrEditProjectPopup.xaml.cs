@@ -33,6 +33,14 @@ public partial class AddOrEditProjectPopup : PopupPage
             ProjectDescriptionEntry.Text = _project.ProjectDescription;
 
             AddOrEditButton.Text = "Edit";
+
+
+            foreach (EmployeeRole role in _project.EmployeesByRoles.Select(n => n.Role))
+            {
+                RolesCollectionView.SelectedItems.Add(role);
+                //Frame el = RolesCollectionView.GetVisualTreeDescendants().First(n => (n as Frame)?.BindingContext == role) as Frame;
+                //VisualStateManager.GoToState(el, "Selected");
+            }
         }
     }
 
@@ -54,21 +62,15 @@ public partial class AddOrEditProjectPopup : PopupPage
             _project.ProjectName = ProjectNameEntry.Text;
             _project.ProjectDescription = ProjectDescriptionEntry.Text;
 
-            var addedGroups = RolesCollectionView.SelectedItems.Cast<EmployeeRole>().Where(role => !_project.EmployeesByRoles.Any(group => group.Role == role));
-            var removedGroups = _project.EmployeesByRoles.Where(group => RolesCollectionView.SelectedItems.Cast<EmployeeRole>().Contains(group.Role));
+            var addedGroups = RolesCollectionView.SelectedItems.Cast<EmployeeRole>().Where(role => !_project.EmployeesByRoles.Any(group => group.Role == role)).ToList();
+            var removedGroups = _project.EmployeesByRoles.Where(group => !RolesCollectionView.SelectedItems.Cast<EmployeeRole>().Contains(group.Role)).ToList();
 
-            foreach (EmployeeRole group in addedGroups)
-            {
-                _project.AddRoleGroup(group);
-            }
+            if (addedGroups.Count != 0) _project.AddRoleGroups(addedGroups);
 
-            if (removedGroups.Any())
+            if (removedGroups.Count != 0)
             {
-                bool res = await Shell.Current.DisplayAlert("Confirmation", $"Are you sure you want to remove group{(removedGroups.Count() > 1 ? "s" : string.Empty)} {string.Join(',', removedGroups.Select(n => n.Role.Name))}. This action cannot be undone", "Yes", "No");
-                foreach (AssignedRoleCollection group in removedGroups)
-                {
-                    _project.RemoveRoleGroup(group.Role);
-                }
+                bool res = await Shell.Current.DisplayAlert("Confirmation", $"Are you sure you want to remove group{(removedGroups.Count > 1 ? "s" : string.Empty)} {string.Join(',', removedGroups.Select(n => n.Role.Name))}. This action cannot be undone", "Yes", "No");
+                _project.RemoveRoleGroups(removedGroups.Select(n => n.Role));
             }
         }
 

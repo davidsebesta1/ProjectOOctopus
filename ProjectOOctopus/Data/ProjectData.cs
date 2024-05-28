@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ProjectOOctopus.Events;
+using ProjectOOctopus.Services;
 using System.Collections.ObjectModel;
+using System.Data;
 
 namespace ProjectOOctopus.Data
 {
@@ -39,7 +41,7 @@ namespace ProjectOOctopus.Data
             }
         }
 
-        public void AddRoleGroup(EmployeeRole role)
+        public void AddRoleGroup(EmployeeRole role, bool reorder = false)
         {
             if (EmployeesByRoles.Any(n => n.Role == role))
             {
@@ -47,9 +49,26 @@ namespace ProjectOOctopus.Data
             }
 
             EmployeesByRoles.Add(new AssignedRoleCollection(role));
+
+            if (reorder)
+            {
+                RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
+                EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
+            }
         }
 
-        public void RemoveRoleGroup(EmployeeRole role)
+        public void AddRoleGroups(IEnumerable<EmployeeRole> roles)
+        {
+            if (roles == null) return;
+
+            var last = roles.Last();
+            foreach (EmployeeRole role in roles)
+            {
+                AddRoleGroup(role, role == last);
+            }
+        }
+
+        public void RemoveRoleGroup(EmployeeRole role, bool reorder = false)
         {
             AssignedRoleCollection collection = EmployeesByRoles.FirstOrDefault(n => n.Role == role);
             if (collection == null)
@@ -57,8 +76,24 @@ namespace ProjectOOctopus.Data
                 return;
             }
 
-            collection.Clear();
             EmployeesByRoles.Remove(collection);
+
+            if (reorder)
+            {
+                RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
+                EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
+            }
+        }
+
+        public void RemoveRoleGroups(IEnumerable<EmployeeRole> roles)
+        {
+            if (roles == null) return;
+
+            var last = roles.Last();
+            foreach (EmployeeRole role in roles)
+            {
+                RemoveRoleGroup(role, role == last);
+            }
         }
 
         public void Dispose()

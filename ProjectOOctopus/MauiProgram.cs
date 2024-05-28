@@ -9,6 +9,8 @@ namespace ProjectOOctopus
 {
     public static class MauiProgram
     {
+        public static MauiApp AppInstance { get; private set; }
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -38,7 +40,11 @@ namespace ProjectOOctopus
 
             builder.Services.AddTransient<RoleManagerPopup>();
 
-            return builder.Build();
+            AppInstance = builder.Build();
+
+            ServicesHelper.Init(AppInstance.Services);
+
+            return AppInstance;
         }
     }
 }
