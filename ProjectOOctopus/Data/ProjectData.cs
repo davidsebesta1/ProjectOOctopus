@@ -23,14 +23,9 @@ namespace ProjectOOctopus.Data
             ProjectDescription = projectDescription;
         }
 
-        public void OnNewEmployeeRoleAdded(object? sender, RoleAddedEventArgs e)
-        {
-            EmployeesByRoles.Add(new AssignedRoleCollection(e.Role));
-        }
-
         public void OnNewEmployeeRoleRemoved(object? sender, RoleRemovedEventArgs e)
         {
-            EmployeesByRoles.Remove(EmployeesByRoles.FirstOrDefault(n => n.Role == e.Role));
+            RemoveRoleGroup(e.Role);
         }
 
         public void RemoveEmployeeFromAllRoles(Employee employee)
@@ -41,14 +36,24 @@ namespace ProjectOOctopus.Data
             }
         }
 
-        public void AddRoleGroup(EmployeeRole role, bool reorder = false)
+        public void AddRoleGroup(EmployeeRole role, int targetCount, bool reorder = false)
         {
             if (EmployeesByRoles.Any(n => n.Role == role))
             {
                 return;
             }
 
-            EmployeesByRoles.Add(new AssignedRoleCollection(role));
+            EmployeesByRoles.Add(new AssignedRoleCollection(role, this, targetCount));
+
+            if (reorder)
+            {
+                RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
+                EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
+            }
+        }
+        private void AddRoleGroup(AssignedRoleCollection role, bool reorder = false)
+        {
+            EmployeesByRoles.Add(role);
 
             if (reorder)
             {
@@ -57,12 +62,12 @@ namespace ProjectOOctopus.Data
             }
         }
 
-        public void AddRoleGroups(IEnumerable<EmployeeRole> roles)
+        public void AddRoleGroups(IEnumerable<AssignedRoleCollection> roles)
         {
             if (roles == null) return;
 
             var last = roles.Last();
-            foreach (EmployeeRole role in roles)
+            foreach (AssignedRoleCollection role in roles)
             {
                 AddRoleGroup(role, role == last);
             }
@@ -76,6 +81,11 @@ namespace ProjectOOctopus.Data
                 return;
             }
 
+            foreach (Employee emp in collection)
+            {
+                emp.SetAssigmentUsage(collection.ProjectData, collection, 0);
+            }
+
             EmployeesByRoles.Remove(collection);
 
             if (reorder)
@@ -83,6 +93,8 @@ namespace ProjectOOctopus.Data
                 RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
                 EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
             }
+
+            collection.Dispose();
         }
 
         public void RemoveRoleGroups(IEnumerable<EmployeeRole> roles)
@@ -98,6 +110,11 @@ namespace ProjectOOctopus.Data
 
         public void Dispose()
         {
+            foreach (AssignedRoleCollection col in EmployeesByRoles)
+            {
+                col.Dispose();
+            }
+
             EmployeesByRoles?.Clear();
             EmployeesByRoles = null;
 

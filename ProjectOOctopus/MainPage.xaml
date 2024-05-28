@@ -34,7 +34,7 @@
                     </VerticalStackLayout>
 
 
-                    <CollectionView ItemsSource="{Binding Projects}" Grid.Row="1">
+                    <CollectionView ItemsSource="{Binding Projects}" SelectionMode="None" Grid.Row="1">
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
                         </CollectionView.ItemsLayout>
@@ -48,7 +48,7 @@
                                     <FlyoutBase.ContextFlyout>
                                         <MenuFlyout>
                                             <MenuFlyoutItem Text="Edit Project / Role Groups" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=EditProjectCommand}" CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type Frame}, AncestorLevel=1}, Path=BindingContext}"/>
-                                            <MenuFlyoutItem Text="Remove Project / Role Groups" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=RemoveProjectCommand}" CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type Frame}, AncestorLevel=1}, Path=BindingContext}"/>
+                                            <MenuFlyoutItem Text="Remove Project" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}, Path=RemoveProjectCommand}" CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type Frame}, AncestorLevel=1}, Path=BindingContext}"/>
                                         </MenuFlyout>
                                     </FlyoutBase.ContextFlyout>
 
@@ -69,14 +69,7 @@
 
                                                 <CollectionView.ItemTemplate>
                                                     <DataTemplate x:DataType="data:AssignedRoleCollection">
-                                                        <Frame BackgroundColor="{Binding Role.Color}" Padding="5" CornerRadius="5" BorderColor="#22000000" MinimumWidthRequest="100">
-
-                                                            <!-- Right click menu-->
-                                                            <FlyoutBase.ContextFlyout>
-                                                                <MenuFlyout>
-                                                                    <MenuFlyoutItem Text="Remove Role Group"/>
-                                                                </MenuFlyout>
-                                                            </FlyoutBase.ContextFlyout>
+                                                        <Frame BackgroundColor="{Binding Role.Color}" Padding="5" CornerRadius="5" BorderColor="#22000000" MinimumWidthRequest="200">
 
                                                             <!-- Drag Gesture Start -->
                                                             <Frame.GestureRecognizers>
@@ -85,27 +78,34 @@
 
                                                             <!-- Assigned employees -->
                                                             <Grid RowDefinitions="25, *">
-                                                                <Label Grid.Row="0" Text="{Binding Role.Name}" FontSize="20"/>
-                                                                <CollectionView Grid.Row="1" ItemsSource="{Binding .}" SelectionMode="Single" HorizontalScrollBarVisibility="Never">
+                                                                <Grid Grid.Row="0" Padding="0">
+                                                                    <Label HorizontalOptions="Start" Text="{Binding Role.Name}" FontSize="16" HeightRequest="20"/>
+                                                                    <Label HorizontalOptions="End" Text="{Binding AssignedEmployeesString}" HeightRequest="20" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                                </Grid>
+                                                                
+                                                                <CollectionView Grid.Row="1" ItemsSource="{Binding Employees}" SelectionMode="None" HorizontalScrollBarVisibility="Never">
                                                                     <CollectionView.EmptyView>
                                                                         <Label Text="No employees yet assigned" TextColor="Black" FontAttributes="Italic"/>
                                                                     </CollectionView.EmptyView>
 
                                                                     <CollectionView.ItemsLayout>
-                                                                        <GridItemsLayout Orientation="Horizontal" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="5"/>
+                                                                        <GridItemsLayout Orientation="Horizontal" Span="2" HorizontalItemSpacing="5" VerticalItemSpacing="5"/>
                                                                     </CollectionView.ItemsLayout>
 
                                                                     <CollectionView.ItemTemplate>
                                                                         <DataTemplate x:DataType="data:Employee">
-                                                                            <HorizontalStackLayout HeightRequest="50">
-                                                                                <Frame Padding="0" Margin="0" CornerRadius="15" BackgroundColor="#EEEEEE" BorderColor="#22000000">
+                                                                            <HorizontalStackLayout>
+                                                                                <Frame Padding="0" Margin="0" CornerRadius="15" BackgroundColor="#EEEEEE" BorderColor="#22000000" WidthRequest="65" HeightRequest="65">
 
                                                                                     <!-- Drag Gesture Start -->
                                                                                     <Frame.GestureRecognizers>
                                                                                         <DragGestureRecognizer CanDrag="True" DragStarting="DragStartEmployeeReAssign"/>
                                                                                     </Frame.GestureRecognizers>
 
-                                                                                    <Label Grid.Row="1" Text="{Binding Initials}" TextColor="#000000" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="50"/>
+                                                                                    <VerticalStackLayout Padding="5">
+                                                                                        <Label Grid.Row="1" Text="{Binding Initials}" TextColor="#000000" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="50" ToolTipProperties.Text="{Binding FullName}"/>
+                                                                                        <Label Loaded="LocalGroupEmpLabel_Loaded" TextColor="{Binding AssignmentUsageLightBackgroundColor}"/>
+                                                                                    </VerticalStackLayout>
                                                                                 </Frame>
                                                                             </HorizontalStackLayout>
                                                                         </DataTemplate>
@@ -145,7 +145,7 @@
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:Employee">
-                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="#88AFAFAF" CornerRadius="5" Padding="0">
+                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="{Binding BackgroundFrameColor}" CornerRadius="5" Padding="0">
 
                                     <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>
@@ -155,13 +155,14 @@
                                         </MenuFlyout>
                                     </FlyoutBase.ContextFlyout>
 
-                                    <Grid ColumnDefinitions="210,70">
-
-                                        <Grid Grid.Column="0" VerticalOptions="Center" ColumnDefinitions="*" RowDefinitions="20, 20" Padding="0" Margin="15,0,0,0">
+                                    <Grid ColumnDefinitions="210,70" Padding="0">
+                                        <Grid Grid.Column="0" VerticalOptions="Center" ColumnDefinitions="*" RowDefinitions="20, 20, 20" Padding="0" Margin="15,0,0,0">
                                             <Label Text="{Binding FirstName}" Grid.Row="0"/>
                                             <Label Text="{Binding LastName}" Grid.Row="1"/>
+                                            <Label Text="{Binding AssignmentUsageString}" TextColor="{Binding AssignmentUsageDarkColor}"  Grid.Row="2"/>
                                         </Grid>
 
+                                        <!-- Known roles-->
                                         <CollectionView Grid.Column="1" ItemsSource="{Binding Roles}" VerticalScrollBarVisibility="Never" HeightRequest="60" Margin="0" HorizontalOptions="End" ToolTipProperties.Text="{Binding RolesToolTip}">
                                             <CollectionView.ItemsLayout>
                                                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="0"/>

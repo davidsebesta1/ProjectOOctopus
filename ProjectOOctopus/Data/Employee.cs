@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -17,8 +18,12 @@ namespace ProjectOOctopus.Data
         private string _lastName;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BackgroundFrameColor))]
+        [NotifyPropertyChangedFor(nameof(AssignmentUsageString))]
+        [NotifyPropertyChangedFor(nameof(AssignmentUsageLightBackgroundColor))]
+        [NotifyPropertyChangedFor(nameof(AssignmentUsageDarkColor))]
         private int _totalAssignmentUsage;
-        private Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>> _assignmentsPerctangeByProject = new Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>>();
+        private readonly Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>> _assignmentsPerctangeByProject = new Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>>();
 
         [ObservableProperty]
         private ObservableCollection<EmployeeRole> _roles;
@@ -28,6 +33,12 @@ namespace ProjectOOctopus.Data
 
         public string FullName => FirstName + " " + LastName;
         public string Initials => FirstName[0] + LastName[0].ToString();
+        public string AssignmentUsageString => $"{TotalAssignmentUsage}%";
+
+        public Color BackgroundFrameColor => TotalAssignmentUsage != 100 ? Color.FromHex("#88AFAFAF") : Color.FromHex("#33AFAFAF");
+
+        public Color AssignmentUsageLightBackgroundColor => TotalAssignmentUsage <= 100 ? Color.FromHex("#000000") : Color.FromHex("#E1561D");
+        public Color AssignmentUsageDarkColor => TotalAssignmentUsage <= 100 ? Color.FromHex("#FFFFFF") : Color.FromHex("#FFE000");
 
         public Employee(string firstName, string lastName, ObservableCollection<EmployeeRole> roles = null)
         {
@@ -46,7 +57,11 @@ namespace ProjectOOctopus.Data
         {
             if (_assignmentsPerctangeByProject.TryGetValue(project, out var innerDir))
             {
-                if (!innerDir.TryAdd(group, usage))
+                if (usage == 0)
+                {
+                    innerDir.Remove(group);
+                }
+                else if (!innerDir.TryAdd(group, usage))
                 {
                     innerDir[group] = usage;
                 }

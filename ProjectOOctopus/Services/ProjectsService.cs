@@ -56,11 +56,20 @@ namespace ProjectOOctopus.Services
             }
         }
 
-        private void TryAddEmployeeByNameFilter(ProjectData project)
+        private async void TryAddEmployeeByNameFilter(ProjectData project)
         {
-            if (project.ProjectName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
+            try
             {
-                Projects.Add(project);
+                if (project.ProjectName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Projects.Add(project);
+                }
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                await Shell.Current.DisplayAlert("Error", ex.ToString(), "Okay");
+#endif
             }
         }
     }

@@ -5,7 +5,7 @@
              xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
              xmlns:data="clr-namespace:ProjectOOctopus.Data"
              BackgroundColor="#88000000">
-    
+
     <ScrollView WidthRequest="450" HeightRequest="720" BackgroundColor="#EE333333">
         <VerticalStackLayout Padding="10" BackgroundColor="#444444">
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
@@ -37,7 +37,7 @@
                         </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="data:EmployeeRole">
+                            <DataTemplate x:DataType="data:RoleGroupEntryData">
                                 <Frame BackgroundColor="Transparent" Padding="2">
 
                                     <VisualStateManager.VisualStateGroups>
@@ -52,12 +52,18 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
 
-                                    <Frame Padding="0" Margin="-15,0,0,0" CornerRadius="5" BackgroundColor="#AA555555" BorderColor="#22000000" WidthRequest="320">
-                                        <HorizontalStackLayout Padding="0" Margin="0" Background="Transparent">
-                                            <Frame BackgroundColor="{Binding Color}" WidthRequest="50" HeightRequest="50" CornerRadius="2"/>
-                                            <Label Margin="10,0,0,0" Grid.Row="1" Text="{Binding Name}" TextColor="#FFFFFF" FontSize="18" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                                        </HorizontalStackLayout>
-                                    </Frame>
+                                    <Grid ColumnDefinitions="295,80">
+                                        <Frame Grid.Column="0" Padding="0" Margin="-15,0,0,0" CornerRadius="5" BackgroundColor="#AA555555" BorderColor="#22000000">
+                                            <HorizontalStackLayout Padding="15,0,0,0" Margin="0" Background="Transparent">
+                                                <Frame BackgroundColor="{Binding Role.Color}" WidthRequest="50" HeightRequest="50" CornerRadius="2"/>
+                                                <Label Margin="10,0,0,0" Grid.Row="1" Text="{Binding Role.Name}" TextColor="#FFFFFF" FontSize="18" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                            </HorizontalStackLayout>
+                                        </Frame>
+
+                                        <Frame Grid.Column="1" Padding="0" CornerRadius="5" BackgroundColor="#AA555555" BorderColor="#22000000">
+                                            <Entry x:Name="TargetAmountEntry"  TextChanged="TargetAmountEntry_TextChanged" Text="0" Keyboard="Numeric"/>
+                                        </Frame>
+                                    </Grid>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

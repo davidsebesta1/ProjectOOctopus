@@ -73,8 +73,7 @@ public partial class AssignEmployeePopup : PopupPage
     {
         if (AssignPercErrText.IsVisible) return;
 
-        _employee.SetAssigmentUsage(_projectData, _projectGroup, int.Parse(AssignPercEntry.Text));
-        _projectGroup.Add(_employee);
+        _projectGroup.Add(_employee, int.Parse(AssignPercEntry.Text));
 
         await MopupService.Instance.PopAsync();
     }
