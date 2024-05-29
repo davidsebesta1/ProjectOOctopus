@@ -22,9 +22,9 @@ namespace ProjectOOctopus.Data
         [NotifyPropertyChangedFor(nameof(BackgroundColor))]
         public int _targetCount;
 
-        public int Count => Employees.Count;
+        public int Count => Employees != null ? Employees.Count : -1;
 
-        public string AssignedEmployeesString => $"{Employees.Count}/{TargetCount}";
+        public string AssignedEmployeesString => $"{Count}/{TargetCount}";
 
         public Color BackgroundColor => TargetCount != Count ? Role.Color : Color.FromRgba((int)((Role.Color.Red - 0.4f) * 255), (int)((Role.Color.Green - 0.4f) * 255), (int)((Role.Color.Blue - 0.4f) * 255), 0.2f);
         public Color EmployeeCellBackgroundColor => Color.FromRgb((int)((Role.Color.Red * 0.7f) * 255), (int)((Role.Color.Green * 0.7f) * 255), (int)((Role.Color.Blue * 0.7f) * 255));

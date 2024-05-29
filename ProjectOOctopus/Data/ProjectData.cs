@@ -21,7 +21,7 @@ namespace ProjectOOctopus.Data
         [NotifyPropertyChangedFor(nameof(BackgroundColor))]
         private ObservableCollection<AssignedRoleCollection> _employeesByRoles = new ObservableCollection<AssignedRoleCollection>();
 
-        public Color BackgroundColor => EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99333333") : Color.FromHex("#88AFAFAF");
+        public Color BackgroundColor => EmployeesByRoles != null ? EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99333333") : Color.FromHex("#88AFAFAF") : Color.FromHex("#FFFFFF");
 
         #endregion
 

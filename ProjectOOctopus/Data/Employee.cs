@@ -83,8 +83,8 @@ namespace ProjectOOctopus.Data
 
         partial void OnRolesChanged(ObservableCollection<EmployeeRole>? oldValue, ObservableCollection<EmployeeRole> newValue)
         {
-            if (oldValue != null) Roles.CollectionChanged -= Roles_CollectionChanged;
-            if (newValue != null) Roles.CollectionChanged += Roles_CollectionChanged;
+            if (oldValue != null) oldValue.CollectionChanged -= Roles_CollectionChanged;
+            if (newValue != null) newValue.CollectionChanged += Roles_CollectionChanged;
         }
 
         private void Roles_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

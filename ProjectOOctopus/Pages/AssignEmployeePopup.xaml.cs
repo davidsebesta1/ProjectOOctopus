@@ -50,10 +50,10 @@ public partial class AssignEmployeePopup : PopupPage
 
     private void AssignPercEntry_TextChanged(object sender, TextChangedEventArgs e)
     {
-        bool errResult = !int.TryParse(e.NewTextValue, out int val) || val < 0 || val > 100;
+        bool result = int.TryParse(e.NewTextValue, out int val) && val >= 0 && val <= 100;
 
-        AssignPercErrText.IsVisible = !errResult;
-        _validationValues["RoleName"] = errResult;
+        AssignPercErrText.IsVisible = !result;
+        _validationValues["AssignmentPercentage"] = result;
 
         AssignPercWarningText.IsVisible = _employee.TotalAssignmentUsage + val > 100;
     }
