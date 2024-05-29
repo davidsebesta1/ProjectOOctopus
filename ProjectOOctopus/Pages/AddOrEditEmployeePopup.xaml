@@ -10,15 +10,15 @@
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="First Name*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="EmpFirstNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="NameErrText" Text="Name must be filled" IsVisible="False" TextColor="#FF5555"/>
+                    <Entry x:Name="EmpFirstNameEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="EmpFirstNameEntry_TextChanged"/>
+                    <Label x:Name="FirstNameErrText" Text="Name must be filled" IsVisible="False" TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="Last Name*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="EmpLastNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
+                    <Entry x:Name="EmpLastNameEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="EmpLastNameEntry_TextChanged"/>
                     <Label x:Name="LastNameErrText" Text="Last name must be filled" IsVisible="False" TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>

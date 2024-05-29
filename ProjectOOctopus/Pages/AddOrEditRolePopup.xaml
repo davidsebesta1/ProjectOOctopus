@@ -10,8 +10,8 @@
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <VerticalStackLayout Padding="5">
                     <Label Text="Role Name*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="RoleNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="RoleErrText" Text="Role Name must be filled" IsVisible="False" TextColor="#FF5555"/>
+                    <Entry x:Name="RoleNameEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="RoleNameEntry_TextChanged"/>
+                    <Label x:Name="RoleNameErrText" Text="Role Name must not be empty" IsVisible="False" TextColor="#FF5555"/>
                 </VerticalStackLayout>
             </Frame>
 
@@ -24,17 +24,17 @@
                         <VerticalStackLayout Grid.Column="0">
                             <HorizontalStackLayout Padding="0" Margin="0">
                                 <Label Text="R" TextColor="#FF0000" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                                <Slider WidthRequest="100" x:Name="RedSlider" Minimum="0" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
+                                <Slider WidthRequest="100" x:Name="RedSlider" Minimum="128" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
                             </HorizontalStackLayout>
 
                             <HorizontalStackLayout Padding="0" Margin="0">
-                                <Label Text="G" TextColor="#00FF00"/>
-                                <Slider WidthRequest="100" x:Name="GreenSlider" Minimum="0" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
+                                <Label Text="G" TextColor="#00FF00" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                <Slider WidthRequest="100" x:Name="GreenSlider" Minimum="128" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
                             </HorizontalStackLayout>
 
                             <HorizontalStackLayout Padding="0" Margin="0">
-                                <Label Text="B" TextColor="#0000FF"/>
-                                <Slider WidthRequest="100" x:Name="BlueSlider" Minimum="0" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
+                                <Label Text="B" TextColor="#0000FF" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                <Slider WidthRequest="100" x:Name="BlueSlider" Minimum="128" Maximum="255" ValueChanged="AnySlider_ValueChanged"/>
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
 

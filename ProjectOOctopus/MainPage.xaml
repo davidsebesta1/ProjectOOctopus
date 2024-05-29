@@ -11,11 +11,10 @@
     <ContentPage.MenuBarItems>
         <MenuBarItem Text="Roles">
             <MenuFlyoutItem Text="Manage roles" Command="{Binding OpenRoleManagerCommand}"/>
-
         </MenuBarItem>
 
         <MenuBarItem Text="Export">
-            <MenuFlyoutItem Text="CSV"/>
+            <MenuFlyoutItem Text="Excel" Command="{Binding ExportToExcelCommand}"/>
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
@@ -79,13 +78,13 @@
                                                             <!-- Assigned employees -->
                                                             <Grid RowDefinitions="25, *">
                                                                 <Grid Grid.Row="0" Padding="0">
-                                                                    <Label HorizontalOptions="Start" Text="{Binding Role.Name}" FontSize="16" HeightRequest="20"/>
-                                                                    <Label HorizontalOptions="End" Text="{Binding AssignedEmployeesString}" HeightRequest="20" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                                                                    <Label HorizontalOptions="Start" TextColor="#222222" Text="{Binding Role.Name}" FontSize="16" HeightRequest="20"/>
+                                                                    <Label HorizontalOptions="End" TextColor="#222222" Text="{Binding AssignedEmployeesString}" HeightRequest="20" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                                                                 </Grid>
 
                                                                 <CollectionView Grid.Row="1" ItemsSource="{Binding Employees}" SelectionMode="None" HorizontalScrollBarVisibility="Never">
                                                                     <CollectionView.EmptyView>
-                                                                        <Label Text="No employees yet assigned" TextColor="Black" FontAttributes="Italic"/>
+                                                                        <Label Text="No employees yet assigned" TextColor="#222222" FontAttributes="Italic"/>
                                                                     </CollectionView.EmptyView>
 
                                                                     <CollectionView.ItemsLayout>
@@ -95,7 +94,7 @@
                                                                     <CollectionView.ItemTemplate>
                                                                         <DataTemplate x:DataType="data:AssignedEmployeeData">
                                                                             <HorizontalStackLayout>
-                                                                                <Frame Padding="0" Margin="0" CornerRadius="15" BackgroundColor="#EEEEEE" BorderColor="#22000000" WidthRequest="65" HeightRequest="65">
+                                                                                <Frame Padding="0" Margin="0" CornerRadius="15" BackgroundColor="{Binding AssignedRoles.EmployeeCellBackgroundColor}" BorderColor="#22000000" WidthRequest="65" HeightRequest="65">
 
                                                                                     <!-- Drag Gesture Start -->
                                                                                     <Frame.GestureRecognizers>
@@ -103,7 +102,7 @@
                                                                                     </Frame.GestureRecognizers>
 
                                                                                     <VerticalStackLayout Padding="5">
-                                                                                        <Label Grid.Row="1" Text="{Binding Employee.Initials}" TextColor="#000000" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="50" ToolTipProperties.Text="{Binding Employee.FullName}"/>
+                                                                                        <Label Grid.Row="1" Text="{Binding Employee.Initials}" TextColor="#222222" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="50" ToolTipProperties.Text="{Binding Employee.FullName}"/>
                                                                                         <Label Text="{Binding AssignmentUsageString}" TextColor="{Binding Employee.AssignmentUsageLightBackgroundColor}"/>
                                                                                     </VerticalStackLayout>
                                                                                 </Frame>
@@ -145,7 +144,16 @@
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:Employee">
-                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" BackgroundColor="{Binding BackgroundFrameColor}" CornerRadius="5" Padding="0">
+                                <Frame HeightRequest="80" HorizontalOptions="StartAndExpand" CornerRadius="5" Padding="0">
+
+                                    <!-- Background Gradient -->
+                                    <Frame.Background>
+                                        <LinearGradientBrush EndPoint="1,0">
+                                            <GradientStop Color="{Binding BackgroundFrameColorAssigned}" Offset="{Binding AssignmentUsage01}" />
+                                            <GradientStop Color="{Binding BackgroundFrameColorUnAssigned}" Offset="{Binding AssignmentUsageBlock}" />
+                                            <GradientStop Color="{Binding BackgroundFrameColorUnAssigned}" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Frame.Background>
 
                                     <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>
@@ -186,7 +194,13 @@
                     </CollectionView>
 
                     <!-- Add Employee Button -->
-                    <Button Grid.Row="2" WidthRequest="50" HorizontalOptions="End" FontSize="48" Padding="0" Text="+" Command="{Binding AddEmployeeCommand}" Margin="0, 0, 15, 15"/>
+                    <Grid Grid.Row="2">
+                        <HorizontalStackLayout Margin="15,0,0,15">
+                            <CheckBox CheckedChanged="EmployeeHideByUsageCheckbox_Changed" Color="{StaticResource PrimaryDark}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Label Text="Hide fully assigned" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+                        </HorizontalStackLayout>
+                        <Button HorizontalOptions="End" WidthRequest="50" FontSize="48" Padding="0" Text="+" Command="{Binding AddEmployeeCommand}" Margin="0, 0, 15, 15"/>
+                    </Grid>
                 </Grid>
             </Frame>
         </Grid>

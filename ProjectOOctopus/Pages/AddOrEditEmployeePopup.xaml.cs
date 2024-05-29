@@ -13,6 +13,12 @@ public partial class AddOrEditEmployeePopup : PopupPage
     private readonly EmployeesService _employeesService;
     private readonly RolesService _rolesService;
 
+    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
+    {
+        {"FirstName", false },
+        {"LastName", false }
+    };
+
     public AddOrEditEmployeePopup(EmployeesService projectsService, RolesService rolesService, Employee employee = null)
     {
         InitializeComponent();
@@ -41,14 +47,18 @@ public partial class AddOrEditEmployeePopup : PopupPage
             foreach (EmployeeRole role in _employee.Roles)
             {
                 RolesCollectionView.SelectedItems.Add(role);
-                //Frame el = RolesCollectionView.GetVisualTreeDescendants().First(n => (n as Frame)?.BindingContext == role) as Frame;
-                //VisualStateManager.GoToState(el, "Selected");
             }
         }
     }
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
+        if (_validationValues.Any(n => !n.Value))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
+            return;
+        }
+
         if (_employee == null)
         {
             ObservableCollection<EmployeeRole> _roles = new ObservableCollection<EmployeeRole>();
@@ -69,12 +79,28 @@ public partial class AddOrEditEmployeePopup : PopupPage
             _employee.LastName = EmpLastNameEntry.Text;
 
             _employee.Roles.Clear();
-            foreach (EmployeeRole role in RolesCollectionView.SelectedItems)
+            foreach (EmployeeRole role in RolesCollectionView.SelectedItems.Cast<EmployeeRole>())
             {
                 _employee.Roles.Add(role);
             }
         }
 
         await MopupService.Instance.PopAsync();
+    }
+
+    private void EmpFirstNameEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        bool res = !string.IsNullOrEmpty(e.NewTextValue);
+
+        FirstNameErrText.IsVisible = !res;
+        _validationValues["FirstName"] = res;
+    }
+
+    private void EmpLastNameEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        bool res = !string.IsNullOrEmpty(e.NewTextValue);
+
+        LastNameErrText.IsVisible = !res;
+        _validationValues["LastName"] = res;
     }
 }

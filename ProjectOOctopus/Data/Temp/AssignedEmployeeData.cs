@@ -1,12 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Data;
 
 namespace ProjectOOctopus.Data
 {
     public partial class AssignedEmployeeData : ObservableObject, IEquatable<AssignedEmployeeData?>
     {
+        #region Properties
+
         [ObservableProperty]
         private Employee _employee;
+
+        [ObservableProperty]
+        private AssignedRoleCollection _assignedRoles;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(AssignmentUsageString))]
@@ -14,11 +18,19 @@ namespace ProjectOOctopus.Data
 
         public string AssignmentUsageString => $"{LocalAssignmentUsage}%";
 
-        public AssignedEmployeeData(Employee employee, int localAssignmentUsage)
+        #endregion
+
+        #region Ctor
+
+        public AssignedEmployeeData(Employee employee, AssignedRoleCollection assignedRoles, int localAssignmentUsage)
         {
             Employee = employee;
+            AssignedRoles = assignedRoles;
             LocalAssignmentUsage = localAssignmentUsage;
         }
+        #endregion
+
+        #region Object methods and operators
 
         public override bool Equals(object? obj)
         {
@@ -45,5 +57,7 @@ namespace ProjectOOctopus.Data
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

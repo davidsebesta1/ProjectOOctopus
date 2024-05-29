@@ -12,6 +12,11 @@ public partial class AssignEmployeePopup : PopupPage
 
     private readonly bool _edit;
 
+    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
+    {
+        {"AssignmentPercentage", false },
+    };
+
     public AssignEmployeePopup(Employee employee, ProjectData projectData, AssignedRoleCollection group, bool edit = false)
     {
         InitializeComponent();
@@ -45,18 +50,12 @@ public partial class AssignEmployeePopup : PopupPage
 
     private void AssignPercEntry_TextChanged(object sender, TextChangedEventArgs e)
     {
-        AssignPercErrText.IsVisible = false;
-        AssignPercWarningText.IsVisible = false;
-        if (!int.TryParse(e.NewTextValue, out int val) || val < 0 || val > 100)
-        {
-            AssignPercErrText.IsVisible = true;
-            return;
-        }
+        bool errResult = !int.TryParse(e.NewTextValue, out int val) || val < 0 || val > 100;
 
-        if (_employee.TotalAssignmentUsage + val > 100)
-        {
-            AssignPercWarningText.IsVisible = true;
-        }
+        AssignPercErrText.IsVisible = !errResult;
+        _validationValues["RoleName"] = errResult;
+
+        AssignPercWarningText.IsVisible = _employee.TotalAssignmentUsage + val > 100;
     }
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
@@ -71,7 +70,11 @@ public partial class AssignEmployeePopup : PopupPage
 
     private async Task TrySaveAndExit()
     {
-        if (AssignPercErrText.IsVisible) return;
+        if (_validationValues.Any(n => !n.Value))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
+            return;
+        }
 
         _projectGroup.Add(_employee, int.Parse(AssignPercEntry.Text));
 

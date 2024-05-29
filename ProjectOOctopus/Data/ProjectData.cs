@@ -9,6 +9,8 @@ namespace ProjectOOctopus.Data
 {
     public partial class ProjectData : ObservableObject, IEquatable<ProjectData?>, IDisposable
     {
+        #region Properties
+
         [ObservableProperty]
         private string _projectName;
 
@@ -19,18 +21,37 @@ namespace ProjectOOctopus.Data
         [NotifyPropertyChangedFor(nameof(BackgroundColor))]
         private ObservableCollection<AssignedRoleCollection> _employeesByRoles = new ObservableCollection<AssignedRoleCollection>();
 
-        public Color BackgroundColor => EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99222222") : Color.FromHex("#88AFAFAF");
+        public Color BackgroundColor => EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99333333") : Color.FromHex("#88AFAFAF");
+
+        #endregion
+
+        #region Ctor
 
         public ProjectData(string projectName, string projectDescription)
         {
             ProjectName = projectName;
             ProjectDescription = projectDescription;
+
+            ServicesHelper.GetService<RolesService>().RoleRemovedEvent += ProjectData_RoleRemovedEvent;
         }
 
-        public void OnNewEmployeeRoleRemoved(object? sender, RoleRemovedEventArgs e)
+        #endregion
+
+        #region Property changed events
+
+        private void ProjectData_RoleRemovedEvent(object? sender, RoleRemovedEventArgs e)
         {
             RemoveRoleGroup(e.Role);
         }
+
+        private void Employees_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            RefreshBackgroundColor();
+        }
+
+        #endregion
+
+        #region Project methods
 
         public void RemoveEmployeeFromAllRoles(Employee employee)
         {
@@ -59,7 +80,8 @@ namespace ProjectOOctopus.Data
             }
         }
 
-        private void Employees_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+
+        public void RefreshBackgroundColor()
         {
             OnPropertyChanged(nameof(BackgroundColor));
         }
@@ -122,8 +144,14 @@ namespace ProjectOOctopus.Data
             }
         }
 
+        #endregion
+
+        #region Object methods
+
         public void Dispose()
         {
+            ServicesHelper.GetService<RolesService>().RoleRemovedEvent -= ProjectData_RoleRemovedEvent;
+
             foreach (AssignedRoleCollection col in EmployeesByRoles)
             {
                 col.Dispose();
@@ -159,5 +187,7 @@ namespace ProjectOOctopus.Data
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

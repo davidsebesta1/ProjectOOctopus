@@ -99,6 +99,7 @@ namespace ProjectOOctopus
             IsBusy = true;
             await _viewModel.EditEmployeeCommand.ExecuteAsync((sender as MenuFlyoutItem).GetParent(2).BindingContext as Employee);
             IsBusy = false;
+
         }
 
         private async void RemoveEmployeeFlyout_Clicked(object sender, EventArgs e)
@@ -117,6 +118,13 @@ namespace ProjectOOctopus
             ProjectData data = (ProjectData)label.GetParent(9).BindingContext;
 
             label.Text = emp.GetAssignentUsage(data, col) + "%";
+            IsBusy = false;
+        }
+
+        private void EmployeeHideByUsageCheckbox_Changed(object sender, CheckedChangedEventArgs e)
+        {
+            IsBusy = true;
+            _viewModel.HideEmployeeByAssignementCommand.Execute(e.Value);
             IsBusy = false;
         }
     }

@@ -11,23 +11,23 @@
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="Project Name*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="ProjectNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="PrNameErrText" Text="Name must be filled" IsVisible="False"  TextColor="#FF5555"/>
+                    <Entry x:Name="ProjectNameEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="ProjectNameEntry_TextChanged"/>
+                    <Label x:Name="PrNameErrText" Text="Name must not be empty" IsVisible="False"  TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="Project Description*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="ProjectDescriptionEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="PrDescNameErrText" Text="Last name must be filled" IsVisible="False"  TextColor="#FF5555"/>
+                    <Entry x:Name="ProjectDescriptionEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="ProjectDescriptionEntry_TextChanged"/>
+                    <Label x:Name="PrDescErrText" Text="Last name must be filled" IsVisible="False"  TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10" Padding="10, 0">
                 <Grid RowDefinitions="35, *" ColumnDefinitions="*" HeightRequest="300" Margin="0,15,0,0">
                     <Label Margin="15,0,0,0" Grid.Row="0" Text="Role Groups" FontSize="18"/>
-                    <CollectionView Grid.Row="1" x:Name="RolesCollectionView" SelectionMode="Multiple" VerticalScrollBarVisibility="Never">
+                    <CollectionView Grid.Row="1" x:Name="RolesCollectionView" SelectionMode="Multiple" VerticalScrollBarVisibility="Never" ChildAdded="RolesCollectionView_ChildAdded">
                         <CollectionView.EmptyView>
                             <Label Margin="0,50,0,0" Text="No assignable roles found, check Role Manager" TextColor="#FFFFFF" FontAttributes="Italic"/>
                         </CollectionView.EmptyView>

@@ -1,21 +1,43 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using ProjectOOctopus.Events;
 
 namespace ProjectOOctopus.Data
 {
     public partial class EmployeeRole : ObservableObject, IEquatable<EmployeeRole?>
     {
+        public event EventHandler<ColorChangedEvent> OnColorChangedEvent;
+
+        #region Properties
+
         [ObservableProperty]
         public string _name;
 
         [ObservableProperty]
         public Color _color;
 
+        #endregion
+
+        #region Ctor
+
         public EmployeeRole(string name, Color color)
         {
             Name = name;
             Color = color;
         }
+
+        #endregion
+
+        #region Property changed events
+
+        partial void OnColorChanged(Color value)
+        {
+            OnColorChangedEvent?.Invoke(this, new ColorChangedEvent(value));
+        }
+
+        #endregion
+
+        #region Object methods
 
         public override string? ToString()
         {
@@ -47,5 +69,7 @@ namespace ProjectOOctopus.Data
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

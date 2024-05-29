@@ -17,6 +17,8 @@ namespace ProjectOOctopus.Services
         private readonly ObservableCollection<Employee> _allEmployees = new ObservableCollection<Employee>();
         public ObservableCollection<Employee> Employees { get; private set; } = new ObservableCollection<Employee>();
 
+        public bool HideEmployeeIfFullyAssigned = false;
+
         public void AddEmployee(Employee employee)
         {
             _allEmployees.Add(employee);
@@ -34,6 +36,11 @@ namespace ProjectOOctopus.Services
             employee.Dispose();
         }
 
+        public void Refresh()
+        {
+            SearchByName(_currentSearch);
+        }
+
         public void SearchByName(string name)
         {
             _currentSearch = name;
@@ -42,6 +49,16 @@ namespace ProjectOOctopus.Services
                 Employees.Clear();
                 foreach (Employee emp in _allEmployees)
                 {
+                    if (HideEmployeeIfFullyAssigned)
+                    {
+                        if (emp.TotalAssignmentUsage != 100)
+                        {
+                            Employees.Add(emp);
+                        }
+
+                        continue;
+                    }
+
                     Employees.Add(emp);
                 }
 
@@ -59,6 +76,16 @@ namespace ProjectOOctopus.Services
         {
             if (employee.FullName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
             {
+                if (HideEmployeeIfFullyAssigned)
+                {
+                    if (employee.TotalAssignmentUsage != 100)
+                    {
+                        Employees.Add(employee);
+                    }
+
+                    return;
+                }
+
                 Employees.Add(employee);
             }
         }

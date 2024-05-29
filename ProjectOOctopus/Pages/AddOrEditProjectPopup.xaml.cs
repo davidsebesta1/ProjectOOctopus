@@ -4,7 +4,6 @@ using ProjectOOctopus.Data;
 using ProjectOOctopus.Services;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 
 namespace ProjectOOctopus.Pages;
 
@@ -15,24 +14,37 @@ public partial class AddOrEditProjectPopup : PopupPage
 
     private ProjectData _project;
 
+    private Dictionary<RoleGroupEntryData, Entry> _entryCheckBoxesCache;
+
+    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
+    {
+        {"ProjectName", false },
+        {"ProjectDescription", false }
+    };
+
     public AddOrEditProjectPopup(ProjectsService projectsService, RolesService rolesService, ProjectData project = null)
     {
         InitializeComponent();
         _projectsService = projectsService;
         _rolesService = rolesService;
         _project = project;
+
+        _entryCheckBoxesCache = new Dictionary<RoleGroupEntryData, Entry>(rolesService.Roles.Count);
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
+        RolesCollectionView.ItemsSource = null;
+
         ObservableCollection<RoleGroupEntryData> entryDatas = new ObservableCollection<RoleGroupEntryData>();
+        RolesCollectionView.ItemsSource = entryDatas;
+
         foreach (EmployeeRole role in _rolesService.Roles)
         {
             entryDatas.Add(new RoleGroupEntryData(role));
         }
-        RolesCollectionView.ItemsSource = entryDatas;
 
         if (_project != null)
         {
@@ -40,23 +52,25 @@ public partial class AddOrEditProjectPopup : PopupPage
             ProjectDescriptionEntry.Text = _project.ProjectDescription;
 
             AddOrEditButton.Text = "Edit";
-
-
-            foreach (RoleGroupEntryData role in _project.EmployeesByRoles.Select(n => new RoleGroupEntryData(n.Role, n.TargetCount)))
-            {
-                RolesCollectionView.SelectedItems.Add(role);
-
-                Entry entry = GetEntryElementByData(role);
-                if (entry != null)
-                {
-                    entry.Text = role.TargetAmount.ToString();
-                }
-            }
         }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        _entryCheckBoxesCache.Clear();
+        _entryCheckBoxesCache = null;
     }
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
+        if (_validationValues.Any(n => !n.Value))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
+            return;
+        }
+
         if (_project == null)
         {
             _project = new ProjectData(ProjectNameEntry.Text, ProjectDescriptionEntry.Text);
@@ -80,7 +94,7 @@ public partial class AddOrEditProjectPopup : PopupPage
             //Handle edited
             foreach (AssignedRoleCollection assignedCollection in editedGroups)
             {
-                Entry entry = GetEntryElementByData(new RoleGroupEntryData(assignedCollection.Role, 0));
+                Entry entry = _entryCheckBoxesCache[new RoleGroupEntryData(assignedCollection.Role, 0)];
                 if (entry != null) assignedCollection.TargetCount = int.Parse(entry.Text);
             }
 
@@ -98,16 +112,6 @@ public partial class AddOrEditProjectPopup : PopupPage
         await MopupService.Instance.PopAsync();
     }
 
-    private Entry GetEntryElementByData(RoleGroupEntryData data)
-    {
-        var tree = RolesCollectionView.GetVisualTreeDescendants();
-        Element el = (Element)tree.FirstOrDefault(n => (n as Element)?.BindingContext as RoleGroupEntryData == data);
-        if (el == null) return null;
-
-        Entry entry = el.FindByName("TargetAmountEntry") as Entry;
-        return entry;
-    }
-
     private void TargetAmountEntry_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (string.IsNullOrEmpty(e.NewTextValue)) return;
@@ -119,5 +123,39 @@ public partial class AddOrEditProjectPopup : PopupPage
         {
             data.TargetAmount = result;
         }
+    }
+
+    private void RolesCollectionView_ChildAdded(object sender, ElementEventArgs e)
+    {
+        if (_project != null && e.Element is Frame)
+        {
+            Entry entry = (Entry)e.Element.FindByName("TargetAmountEntry");
+            RoleGroupEntryData roleGroup = (RoleGroupEntryData)e.Element.BindingContext;
+            _entryCheckBoxesCache.Add(roleGroup, entry);
+
+            AssignedRoleCollection target = _project.EmployeesByRoles.FirstOrDefault(n => n.Role == roleGroup.Role);
+
+            if (target != null && target.TargetCount > 0)
+            {
+                RolesCollectionView.SelectedItems.Add(roleGroup);
+                entry.Text = target.TargetCount.ToString();
+            }
+        }
+    }
+
+    private void ProjectDescriptionEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        bool res = !string.IsNullOrEmpty(e.NewTextValue);
+
+        PrDescErrText.IsVisible = !res;
+        _validationValues["ProjectDescription"] = res;
+    }
+
+    private void ProjectNameEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        bool res = !string.IsNullOrEmpty(e.NewTextValue);
+
+        PrNameErrText.IsVisible = !res;
+        _validationValues["ProjectName"] = res;
     }
 }

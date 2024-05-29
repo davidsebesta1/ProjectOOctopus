@@ -15,6 +15,7 @@ namespace ProjectOOctopus.ViewModels
         private readonly EmployeesService _employeesService;
         private readonly ProjectsService _projectsService;
         private readonly RolesService _rolesService;
+        private readonly ExcelService _excelService;
 
         [ObservableProperty]
         private ObservableCollection<Employee> _employees;
@@ -28,7 +29,7 @@ namespace ProjectOOctopus.ViewModels
 
         #region Ctor
 
-        public MainPageViewModel(EmployeesService empService, ProjectsService projectsService, RolesService rolesService, RoleManagerPopup roleManagerPopup)
+        public MainPageViewModel(EmployeesService empService, ProjectsService projectsService, RolesService rolesService, RoleManagerPopup roleManagerPopup, ExcelService excelService)
         {
             _employeesService = empService;
             _projectsService = projectsService;
@@ -38,6 +39,7 @@ namespace ProjectOOctopus.ViewModels
 
             Projects = _projectsService.Projects;
             Employees = _employeesService.Employees;
+            _excelService = excelService;
         }
 
         #endregion
@@ -69,6 +71,19 @@ namespace ProjectOOctopus.ViewModels
         private void SearchEmployeesByName(string name)
         {
             _employeesService.SearchByName(name);
+        }
+
+        [RelayCommand]
+        private void HideEmployeeByAssignement(bool value)
+        {
+            _employeesService.HideEmployeeIfFullyAssigned = value;
+            _employeesService.Refresh();
+        }
+
+        [RelayCommand]
+        private void RefreshEmployees()
+        {
+            _employeesService.Refresh();
         }
 
         #endregion
@@ -111,6 +126,16 @@ namespace ProjectOOctopus.ViewModels
         private async Task LoadBaseRoles()
         {
             await _rolesService.LoadBaseRoles();
+        }
+
+        #endregion
+
+        #region Export
+
+        [RelayCommand]
+        public async Task ExportToExcel()
+        {
+            await _excelService.Test();
         }
 
         #endregion

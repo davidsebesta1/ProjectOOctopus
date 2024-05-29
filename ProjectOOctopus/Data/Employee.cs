@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+using ProjectOOctopus.Events;
+using ProjectOOctopus.Services;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -7,6 +8,8 @@ namespace ProjectOOctopus.Data
 {
     public partial class Employee : ObservableObject, IEquatable<Employee?>, IDisposable
     {
+        #region Properties
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(FullName))]
         [NotifyPropertyChangedFor(nameof(Initials))]
@@ -18,10 +21,11 @@ namespace ProjectOOctopus.Data
         private string _lastName;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(BackgroundFrameColor))]
         [NotifyPropertyChangedFor(nameof(AssignmentUsageString))]
         [NotifyPropertyChangedFor(nameof(AssignmentUsageLightBackgroundColor))]
         [NotifyPropertyChangedFor(nameof(AssignmentUsageDarkColor))]
+        [NotifyPropertyChangedFor(nameof(AssignmentUsage01))]
+        [NotifyPropertyChangedFor(nameof(AssignmentUsageBlock))]
         private int _totalAssignmentUsage;
         private readonly Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>> _assignmentsPerctangeByProject = new Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>>();
 
@@ -35,10 +39,18 @@ namespace ProjectOOctopus.Data
         public string Initials => FirstName[0] + LastName[0].ToString();
         public string AssignmentUsageString => $"{TotalAssignmentUsage}%";
 
-        public Color BackgroundFrameColor => TotalAssignmentUsage != 100 ? Color.FromHex("#88AFAFAF") : Color.FromHex("#33AFAFAF");
+        public Color BackgroundFrameColorUnAssigned => Color.FromHex("#88AFAFAF");
+        public Color BackgroundFrameColorAssigned => Color.FromHex("#33AFAFAF");
+
+        public float AssignmentUsage01 => TotalAssignmentUsage * 0.01f;
+        public float AssignmentUsageBlock => AssignmentUsage01 <= 0.01f ? 0f : AssignmentUsage01 + 0.001f;
 
         public Color AssignmentUsageLightBackgroundColor => TotalAssignmentUsage <= 100 ? Color.FromHex("#000000") : Color.FromHex("#E1561D");
         public Color AssignmentUsageDarkColor => TotalAssignmentUsage <= 100 ? Color.FromHex("#FFFFFF") : Color.FromHex("#FFE000");
+
+        #endregion
+
+        #region Ctor
 
         public Employee(string firstName, string lastName, ObservableCollection<EmployeeRole> roles = null)
         {
@@ -51,7 +63,38 @@ namespace ProjectOOctopus.Data
                 Roles.CollectionChanged += Roles_CollectionChanged;
                 Roles_CollectionChanged(null, null);
             }
+
+            ServicesHelper.GetService<RolesService>().RoleRemovedEvent += Employee_RoleRemovedEvent;
         }
+
+        #endregion
+
+        #region Property changed events
+
+        private void Employee_RoleRemovedEvent(object? sender, RoleRemovedEventArgs e)
+        {
+            Roles.Remove(e.Role);
+        }
+
+        partial void OnTotalAssignmentUsageChanged(int oldValue, int newValue)
+        {
+            ServicesHelper.GetService<EmployeesService>().Refresh();
+        }
+
+        partial void OnRolesChanged(ObservableCollection<EmployeeRole>? oldValue, ObservableCollection<EmployeeRole> newValue)
+        {
+            if (oldValue != null) Roles.CollectionChanged -= Roles_CollectionChanged;
+            if (newValue != null) Roles.CollectionChanged += Roles_CollectionChanged;
+        }
+
+        private void Roles_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            RolesToolTip = Roles.Any() ? string.Join(',', Roles.Select(n => n.Name)) : "No known roles";
+        }
+
+        #endregion
+
+        #region Employee methods
 
         public void SetAssigmentUsage(ProjectData project, AssignedRoleCollection group, int usage)
         {
@@ -89,16 +132,9 @@ namespace ProjectOOctopus.Data
             return 100 - TotalAssignmentUsage;
         }
 
-        partial void OnRolesChanged(ObservableCollection<EmployeeRole>? oldValue, ObservableCollection<EmployeeRole> newValue)
-        {
-            if (oldValue != null) Roles.CollectionChanged -= Roles_CollectionChanged;
-            if (newValue != null) Roles.CollectionChanged += Roles_CollectionChanged;
-        }
+        #endregion
 
-        private void Roles_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            RolesToolTip = Roles.Any() ? string.Join(',', Roles.Select(n => n.Name)) : "No known roles";
-        }
+        #region Object methods
 
         public override bool Equals(object? obj)
         {
@@ -119,12 +155,13 @@ namespace ProjectOOctopus.Data
 
         public void Dispose()
         {
-            if (Roles == null) return;
-
-            Roles.Clear();
+            Roles?.Clear();
             Roles = null;
 
+            ServicesHelper.GetService<RolesService>().RoleRemovedEvent -= Employee_RoleRemovedEvent;
+
             GC.SuppressFinalize(this);
+
         }
 
         public static bool operator ==(Employee? left, Employee? right)
@@ -136,5 +173,7 @@ namespace ProjectOOctopus.Data
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

@@ -10,6 +10,11 @@ public partial class AddOrEditRolePopup : PopupPage
     private readonly RolesService _rolesService;
     private EmployeeRole _role;
 
+    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
+    {
+        {"RoleName", false },
+    };
+
     public AddOrEditRolePopup(RolesService rolesService, EmployeeRole role = null)
     {
         InitializeComponent();
@@ -29,7 +34,8 @@ public partial class AddOrEditRolePopup : PopupPage
             GreenSlider.Value = _role.Color.Green * 255;
 
             AddOrEditButton.Text = "Edit";
-        } else
+        }
+        else
         {
             RedSlider.Value = 128;
             BlueSlider.Value = 128;
@@ -39,6 +45,12 @@ public partial class AddOrEditRolePopup : PopupPage
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
+        if (_validationValues.Any(n => !n.Value))
+        {
+            await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
+            return;
+        }
+
         if (_role == null)
         {
             _role = new EmployeeRole(RoleNameEntry.Text, PreviewColorFrame.BackgroundColor);
@@ -56,5 +68,13 @@ public partial class AddOrEditRolePopup : PopupPage
     private void AnySlider_ValueChanged(object sender, ValueChangedEventArgs e)
     {
         PreviewColorFrame.BackgroundColor = Color.FromRgb((int)RedSlider.Value, (int)GreenSlider.Value, (int)BlueSlider.Value);
+    }
+
+    private void RoleNameEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        bool res = !string.IsNullOrEmpty(e.NewTextValue);
+
+        RoleNameErrText.IsVisible = !res;
+        _validationValues["RoleName"] = res;
     }
 }

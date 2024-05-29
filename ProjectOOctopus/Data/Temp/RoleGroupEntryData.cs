@@ -4,17 +4,27 @@ namespace ProjectOOctopus.Data
 {
     public partial class RoleGroupEntryData : ObservableObject, IEquatable<RoleGroupEntryData?>
     {
+        #region Properties
+
         [ObservableProperty]
         private EmployeeRole _role;
 
         [ObservableProperty]
         private int _targetAmount;
 
+        #endregion
+
+        #region Ctor
+
         public RoleGroupEntryData(EmployeeRole role, int targetAmount = 0)
         {
             Role = role;
             TargetAmount = targetAmount;
         }
+
+        #endregion
+
+        #region Object methods
 
         public override bool Equals(object? obj)
         {
@@ -41,5 +51,7 @@ namespace ProjectOOctopus.Data
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }
