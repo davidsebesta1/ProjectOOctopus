@@ -37,6 +37,8 @@ namespace ProjectOOctopus
             builder.Services.AddSingleton<CsvLoader>();
             builder.Services.AddSingleton<ExcelService>();
 
+            builder.Services.AddTransient<EntryValidatorService>();
+
             builder.Services.AddTransient<MainPage>();
 
             builder.Services.AddTransient<RoleManagerPopup>();

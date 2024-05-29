@@ -2,6 +2,7 @@
 using ProjectOOctopus.Data;
 using ProjectOOctopus.Extensions;
 using ProjectOOctopus.Pages;
+using ProjectOOctopus.Services;
 using ProjectOOctopus.ViewModels;
 
 namespace ProjectOOctopus
@@ -60,7 +61,7 @@ namespace ProjectOOctopus
                     }
                 }
 
-                await MopupService.Instance.PushAsync(new AssignEmployeePopup(targetEmployee, targetProjectData, targetRoleGroup));
+                await MopupService.Instance.PushAsync(new AssignEmployeePopup(targetEmployee, targetProjectData, targetRoleGroup, ServicesHelper.GetService<EntryValidatorService>()));
             }
 
             IsBusy = false;

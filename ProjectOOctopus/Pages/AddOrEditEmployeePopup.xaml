@@ -5,12 +5,12 @@
              xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
              xmlns:data="clr-namespace:ProjectOOctopus.Data"
              BackgroundColor="#88000000">
-    <Frame WidthRequest="450" HeightRequest="720" BackgroundColor="#EE333333">
+    <Frame WidthRequest="450" HeightRequest="750" BackgroundColor="#EE333333">
         <VerticalStackLayout Padding="10" BackgroundColor="#444444">
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="First Name*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="EmpFirstNameEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="EmpFirstNameEntry_TextChanged"/>
+                    <Entry x:Name="EmpFirstNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
                     <Label x:Name="FirstNameErrText" Text="Name must be filled" IsVisible="False" TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
@@ -18,7 +18,7 @@
             <Frame Margin="0,10,0,0" BackgroundColor="#444444" CornerRadius="10">
                 <StackLayout Padding="5">
                     <Label Text="Last Name*" FontSize="18" TextColor="White"/>
-                    <Entry x:Name="EmpLastNameEntry" Keyboard="Text" TextColor="White" FontSize="16" TextChanged="EmpLastNameEntry_TextChanged"/>
+                    <Entry x:Name="EmpLastNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
                     <Label x:Name="LastNameErrText" Text="Last name must be filled" IsVisible="False" TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
@@ -38,7 +38,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:EmployeeRole">
                                 <Frame BackgroundColor="Transparent" Padding="2">
-
+                                    
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup Name="CommonStates">
                                             <VisualState Name="Normal"/>
@@ -57,6 +57,7 @@
                                             <Label Margin="10,0,0,0" Grid.Row="1" Text="{Binding Name}" TextColor="#FFFFFF" FontSize="18" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
                                         </HorizontalStackLayout>
                                     </Frame>
+                                    
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

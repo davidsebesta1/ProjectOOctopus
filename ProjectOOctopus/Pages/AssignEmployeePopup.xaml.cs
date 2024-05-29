@@ -1,6 +1,7 @@
 using Mopups.Pages;
 using Mopups.Services;
 using ProjectOOctopus.Data;
+using ProjectOOctopus.Services;
 
 namespace ProjectOOctopus.Pages;
 
@@ -12,14 +13,12 @@ public partial class AssignEmployeePopup : PopupPage
 
     private readonly bool _edit;
 
-    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
-    {
-        {"AssignmentPercentage", false },
-    };
+    private EntryValidatorService _validatorService;
 
-    public AssignEmployeePopup(Employee employee, ProjectData projectData, AssignedRoleCollection group, bool edit = false)
+    public AssignEmployeePopup(Employee employee, ProjectData projectData, AssignedRoleCollection group, EntryValidatorService entryValidatorService, bool edit = false)
     {
         InitializeComponent();
+        _validatorService = entryValidatorService;
         _projectData = projectData;
         _employee = employee;
         _projectGroup = group;
@@ -30,6 +29,13 @@ public partial class AssignEmployeePopup : PopupPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        _validatorService.TryRegisterValidation("AssignmentPercentage", AssignPercEntry, (text) =>
+        {
+            bool success = int.TryParse(text, out int val) && val >= 0 && val <= 100;
+            AssignPercWarningText.IsVisible = _employee.TotalAssignmentUsage + val > 100;
+            return success;
+        }, AssignPercErrText);
 
         int usage = _employee.TotalAssignmentUsage;
         int remaining = _employee.GetRemainingUsageToFull();
@@ -48,14 +54,11 @@ public partial class AssignEmployeePopup : PopupPage
         AssignPercEntry.Focus();
     }
 
-    private void AssignPercEntry_TextChanged(object sender, TextChangedEventArgs e)
+    protected override void OnDisappearing()
     {
-        bool result = int.TryParse(e.NewTextValue, out int val) && val >= 0 && val <= 100;
+        base.OnDisappearing();
 
-        AssignPercErrText.IsVisible = !result;
-        _validationValues["AssignmentPercentage"] = result;
-
-        AssignPercWarningText.IsVisible = _employee.TotalAssignmentUsage + val > 100;
+        _validatorService.ClearAllValidations();
     }
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
@@ -70,7 +73,8 @@ public partial class AssignEmployeePopup : PopupPage
 
     private async Task TrySaveAndExit()
     {
-        if (_validationValues.Any(n => !n.Value))
+        _validatorService.RevalidateAll();
+        if (!_validatorService.AllValid)
         {
             await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
             return;

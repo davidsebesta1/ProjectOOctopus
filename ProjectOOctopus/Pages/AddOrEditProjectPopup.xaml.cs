@@ -16,18 +16,15 @@ public partial class AddOrEditProjectPopup : PopupPage
 
     private Dictionary<RoleGroupEntryData, Entry> _entryCheckBoxesCache;
 
-    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
-    {
-        {"ProjectName", false },
-        {"ProjectDescription", false }
-    };
+    private EntryValidatorService _validatorService;
 
-    public AddOrEditProjectPopup(ProjectsService projectsService, RolesService rolesService, ProjectData project = null)
+    public AddOrEditProjectPopup(ProjectsService projectsService, RolesService rolesService, EntryValidatorService entryValidatorService, ProjectData project = null)
     {
         InitializeComponent();
         _projectsService = projectsService;
         _rolesService = rolesService;
         _project = project;
+        _validatorService = entryValidatorService;
 
         _entryCheckBoxesCache = new Dictionary<RoleGroupEntryData, Entry>(rolesService.Roles.Count);
     }
@@ -35,6 +32,9 @@ public partial class AddOrEditProjectPopup : PopupPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        _validatorService.TryRegisterValidation("ProjectName", ProjectNameEntry, (text) => !string.IsNullOrEmpty(text), PrNameErrText);
+        _validatorService.TryRegisterValidation("ProjectDescription", ProjectDescriptionEntry, (text) => !string.IsNullOrEmpty(text), PrDescErrText);
 
         RolesCollectionView.ItemsSource = null;
 
@@ -61,11 +61,14 @@ public partial class AddOrEditProjectPopup : PopupPage
 
         _entryCheckBoxesCache.Clear();
         _entryCheckBoxesCache = null;
+
+        _validatorService.ClearAllValidations();
     }
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
-        if (_validationValues.Any(n => !n.Value))
+        _validatorService.RevalidateAll();
+        if (!_validatorService.AllValid)
         {
             await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
             return;
@@ -141,21 +144,5 @@ public partial class AddOrEditProjectPopup : PopupPage
                 entry.Text = target.TargetCount.ToString();
             }
         }
-    }
-
-    private void ProjectDescriptionEntry_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        bool res = !string.IsNullOrEmpty(e.NewTextValue);
-
-        PrDescErrText.IsVisible = !res;
-        _validationValues["ProjectDescription"] = res;
-    }
-
-    private void ProjectNameEntry_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        bool res = !string.IsNullOrEmpty(e.NewTextValue);
-
-        PrNameErrText.IsVisible = !res;
-        _validationValues["ProjectName"] = res;
     }
 }

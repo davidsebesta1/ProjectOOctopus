@@ -13,19 +13,16 @@ public partial class AddOrEditEmployeePopup : PopupPage
     private readonly EmployeesService _employeesService;
     private readonly RolesService _rolesService;
 
-    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
-    {
-        {"FirstName", false },
-        {"LastName", false }
-    };
+    private EntryValidatorService _entryValidatorService;
 
-    public AddOrEditEmployeePopup(EmployeesService projectsService, RolesService rolesService, Employee employee = null)
+    public AddOrEditEmployeePopup(EmployeesService projectsService, RolesService rolesService, EntryValidatorService entryValidatorService, Employee employee = null)
     {
         InitializeComponent();
 
         _employeesService = projectsService;
         _employee = employee;
         _rolesService = rolesService;
+        _entryValidatorService = entryValidatorService;
 
         RolesCollectionView.ItemsSource = _rolesService.Roles;
 
@@ -49,11 +46,22 @@ public partial class AddOrEditEmployeePopup : PopupPage
                 RolesCollectionView.SelectedItems.Add(role);
             }
         }
+
+        _entryValidatorService.TryRegisterValidation("FirstName", EmpFirstNameEntry, (text) => !string.IsNullOrEmpty(text), FirstNameErrText);
+        _entryValidatorService.TryRegisterValidation("LastName", EmpLastNameEntry, (text) => !string.IsNullOrEmpty(text), LastNameErrText);
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        _entryValidatorService.ClearAllValidations();
     }
 
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
-        if (_validationValues.Any(n => !n.Value))
+        _entryValidatorService.RevalidateAll();
+        if (!_entryValidatorService.AllValid)
         {
             await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
             return;
@@ -86,21 +94,5 @@ public partial class AddOrEditEmployeePopup : PopupPage
         }
 
         await MopupService.Instance.PopAsync();
-    }
-
-    private void EmpFirstNameEntry_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        bool res = !string.IsNullOrEmpty(e.NewTextValue);
-
-        FirstNameErrText.IsVisible = !res;
-        _validationValues["FirstName"] = res;
-    }
-
-    private void EmpLastNameEntry_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        bool res = !string.IsNullOrEmpty(e.NewTextValue);
-
-        LastNameErrText.IsVisible = !res;
-        _validationValues["LastName"] = res;
     }
 }

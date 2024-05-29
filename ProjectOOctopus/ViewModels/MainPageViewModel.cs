@@ -51,13 +51,13 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         private async Task AddEmployee()
         {
-            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, _rolesService));
+            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, _rolesService, ServicesHelper.GetService<EntryValidatorService>()));
         }
 
         [RelayCommand]
         private async Task EditEmployee(Employee employee)
         {
-            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, _rolesService, employee));
+            await MopupService.Instance.PushAsync(new AddOrEditEmployeePopup(_employeesService, _rolesService, ServicesHelper.GetService<EntryValidatorService>(), employee));
         }
 
         [RelayCommand]
@@ -92,13 +92,13 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         private async Task AddProject()
         {
-            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, _rolesService));
+            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, _rolesService, ServicesHelper.GetService<EntryValidatorService>()));
         }
 
         [RelayCommand]
         private async Task EditProject(ProjectData project)
         {
-            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, _rolesService, project));
+            await MopupService.Instance.PushAsync(new AddOrEditProjectPopup(_projectsService, _rolesService, ServicesHelper.GetService<EntryValidatorService>(), project));
         }
 
         [RelayCommand]

@@ -25,13 +25,13 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         public async Task AddNewRole()
         {
-            await MopupService.Instance.PushAsync(new AddOrEditRolePopup(_rolesService));
+            await MopupService.Instance.PushAsync(new AddOrEditRolePopup(_rolesService, ServicesHelper.GetService<EntryValidatorService>()));
         }
 
         [RelayCommand]
         public async Task EditRole(EmployeeRole role)
         {
-            await MopupService.Instance.PushAsync(new AddOrEditRolePopup(_rolesService, role));
+            await MopupService.Instance.PushAsync(new AddOrEditRolePopup(_rolesService, ServicesHelper.GetService<EntryValidatorService>(), role));
         }
 
         [RelayCommand]

@@ -10,14 +10,12 @@ public partial class AddOrEditRolePopup : PopupPage
     private readonly RolesService _rolesService;
     private EmployeeRole _role;
 
-    private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>()
-    {
-        {"RoleName", false },
-    };
+    private EntryValidatorService _validatorService;
 
-    public AddOrEditRolePopup(RolesService rolesService, EmployeeRole role = null)
+    public AddOrEditRolePopup(RolesService rolesService, EntryValidatorService entryValidatorService, EmployeeRole role = null)
     {
         InitializeComponent();
+        _validatorService = entryValidatorService;
         _rolesService = rolesService;
         _role = role;
     }
@@ -25,6 +23,8 @@ public partial class AddOrEditRolePopup : PopupPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        _validatorService.TryRegisterValidation("RoleName", RoleNameEntry, (text) => !string.IsNullOrEmpty(text), RoleNameErrText);
 
         if (_role != null)
         {
@@ -43,9 +43,17 @@ public partial class AddOrEditRolePopup : PopupPage
         }
     }
 
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        _validatorService.ClearAllValidations();
+    }
+
     private async void AddOrEditButton_Clicked(object sender, EventArgs e)
     {
-        if (_validationValues.Any(n => !n.Value))
+        _validatorService.RevalidateAll();
+        if (!_validatorService.AllValid)
         {
             await Shell.Current.DisplayAlert("Validation", "Please fix any invalid input fields and try again", "Okay");
             return;
@@ -68,13 +76,5 @@ public partial class AddOrEditRolePopup : PopupPage
     private void AnySlider_ValueChanged(object sender, ValueChangedEventArgs e)
     {
         PreviewColorFrame.BackgroundColor = Color.FromRgb((int)RedSlider.Value, (int)GreenSlider.Value, (int)BlueSlider.Value);
-    }
-
-    private void RoleNameEntry_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        bool res = !string.IsNullOrEmpty(e.NewTextValue);
-
-        RoleNameErrText.IsVisible = !res;
-        _validationValues["RoleName"] = res;
     }
 }
