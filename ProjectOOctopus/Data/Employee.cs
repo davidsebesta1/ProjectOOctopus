@@ -27,7 +27,7 @@ namespace ProjectOOctopus.Data
         [NotifyPropertyChangedFor(nameof(AssignmentUsage01))]
         [NotifyPropertyChangedFor(nameof(AssignmentUsageBlock))]
         private int _totalAssignmentUsage;
-        private readonly Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>> _assignmentsPerctangeByProject = new Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>>();
+        internal readonly Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>> _assignmentsPerctangeByProject = new Dictionary<ProjectData, Dictionary<AssignedRoleCollection, int>>();
 
         [ObservableProperty]
         private ObservableCollection<EmployeeRole> _roles;

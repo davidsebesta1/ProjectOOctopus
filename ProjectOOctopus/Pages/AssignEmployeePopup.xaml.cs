@@ -32,7 +32,7 @@ public partial class AssignEmployeePopup : PopupPage
 
         _validatorService.TryRegisterValidation("AssignmentPercentage", AssignPercEntry, (text) =>
         {
-            bool success = int.TryParse(text, out int val) && val >= 0 && val <= 100;
+            bool success = int.TryParse(text, out int val) && val >= 1 && val <= 100;
             AssignPercWarningText.IsVisible = _employee.TotalAssignmentUsage + val > 100;
             return success;
         }, AssignPercErrText);

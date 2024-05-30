@@ -15,7 +15,7 @@
                         <Entry x:Name="AssignPercEntry" Keyboard="Numeric" TextColor="White" FontSize="16" WidthRequest="250" Completed="AssignPercEntry_Completed"/>
                         <Label Text="%" FontSize="16" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                     </HorizontalStackLayout>
-                    <Label x:Name="AssignPercErrText" Text="Please enter a number between 0 and 100" IsVisible="False"  TextColor="#FF5555"/>
+                    <Label x:Name="AssignPercErrText" Text="Please enter a number between 1 and 100" IsVisible="False"  TextColor="#FF5555"/>
                     <Label x:Name="AssignPercWarningText" Text="Warning, total assignment with this value will be above 100%" IsVisible="False"  TextColor="#FFEE00"/>
                 </StackLayout>
             </Frame>
