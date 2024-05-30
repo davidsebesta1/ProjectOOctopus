@@ -7,10 +7,16 @@ namespace ProjectOOctopus.Pages;
 
 public partial class AddOrEditRolePopup : PopupPage
 {
+    #region Properties
+
     private readonly RolesService _rolesService;
     private EmployeeRole _role;
 
     private EntryValidatorService _validatorService;
+
+    #endregion
+
+    #region Ctor
 
     public AddOrEditRolePopup(RolesService rolesService, EntryValidatorService entryValidatorService, EmployeeRole role = null)
     {
@@ -19,6 +25,10 @@ public partial class AddOrEditRolePopup : PopupPage
         _rolesService = rolesService;
         _role = role;
     }
+
+    #endregion
+
+    #region Page methods and events
 
     protected override void OnAppearing()
     {
@@ -78,4 +88,6 @@ public partial class AddOrEditRolePopup : PopupPage
     {
         PreviewColorFrame.BackgroundColor = Color.FromRgb((int)RedSlider.Value, (int)GreenSlider.Value, (int)BlueSlider.Value);
     }
+
+    #endregion
 }

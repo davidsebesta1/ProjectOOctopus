@@ -7,9 +7,18 @@ using ProjectOOctopus.ViewModels;
 
 namespace ProjectOOctopus
 {
+    /// <summary>
+    /// The Main Page.
+    /// </summary>
     public partial class MainPage : ContentPage
     {
+        #region Properties
+
         private MainPageViewModel _viewModel;
+
+        #endregion
+
+        #region Ctor
 
         public MainPage(MainPageViewModel vm)
         {
@@ -17,6 +26,10 @@ namespace ProjectOOctopus
             BindingContext = vm;
             _viewModel = vm;
         }
+
+        #endregion
+
+        #region Page methods and events
 
         protected async override void OnAppearing()
         {
@@ -128,5 +141,7 @@ namespace ProjectOOctopus
             _viewModel.HideEmployeeByAssignementCommand.Execute(e.Value);
             IsBusy = false;
         }
+
+        #endregion
     }
 }

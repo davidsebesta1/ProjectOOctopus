@@ -8,12 +8,17 @@ namespace ProjectOOctopus.Pages;
 
 public partial class AddOrEditEmployeePopup : PopupPage
 {
+    #region Properties
     private Employee _employee;
 
     private readonly EmployeesService _employeesService;
     private readonly RolesService _rolesService;
 
     private EntryValidatorService _entryValidatorService;
+
+    #endregion
+
+    #region Ctor
 
     public AddOrEditEmployeePopup(EmployeesService projectsService, RolesService rolesService, EntryValidatorService entryValidatorService, Employee employee = null)
     {
@@ -34,6 +39,10 @@ public partial class AddOrEditEmployeePopup : PopupPage
             AddOrEditButton.Text = "Edit";
         }
     }
+
+    #endregion
+
+    #region Page methods and events
 
     protected override void OnAppearing()
     {
@@ -95,4 +104,6 @@ public partial class AddOrEditEmployeePopup : PopupPage
 
         await MopupService.Instance.PopAsync();
     }
+
+    #endregion
 }

@@ -3,14 +3,30 @@ using System.Collections.ObjectModel;
 
 namespace ProjectOOctopus.Services
 {
+    /// <summary>
+    /// Service for managing all projects within application.
+    /// It is required to add new projects into this service for them to be shown and manipulated.
+    /// </summary>
     public class ProjectsService
     {
-        public ProjectsService() { }
-
+        #region Prroperties
         private string _currentSearch = string.Empty;
 
         public readonly ObservableCollection<ProjectData> _allProjects = new ObservableCollection<ProjectData>();
         public ObservableCollection<ProjectData> Projects { get; private set; } = new ObservableCollection<ProjectData>();
+
+        #endregion
+
+        #region Ctor
+
+        public ProjectsService()
+        {
+
+        }
+
+        #endregion
+
+        #region Service Methods
 
         public void AddProject(ProjectData project)
         {
@@ -60,19 +76,12 @@ namespace ProjectOOctopus.Services
 
         private async void TryAddEmployeeByNameFilter(ProjectData project)
         {
-            try
+            if (project.ProjectName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (project.ProjectName.Contains(_currentSearch, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Projects.Add(project);
-                }
-            }
-            catch (Exception ex)
-            {
-#if DEBUG
-                await Shell.Current.DisplayAlert("Error", ex.ToString(), "Okay");
-#endif
+                Projects.Add(project);
             }
         }
+
+        #endregion
     }
 }

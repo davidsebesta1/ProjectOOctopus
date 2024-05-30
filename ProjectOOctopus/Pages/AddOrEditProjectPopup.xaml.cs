@@ -9,6 +9,8 @@ namespace ProjectOOctopus.Pages;
 
 public partial class AddOrEditProjectPopup : PopupPage
 {
+    #region Properties
+
     private readonly ProjectsService _projectsService;
     private readonly RolesService _rolesService;
 
@@ -17,6 +19,10 @@ public partial class AddOrEditProjectPopup : PopupPage
     private Dictionary<RoleGroupEntryData, Entry> _entryCheckBoxesCache;
 
     private EntryValidatorService _validatorService;
+
+    #endregion
+
+    #region Ctor
 
     public AddOrEditProjectPopup(ProjectsService projectsService, RolesService rolesService, EntryValidatorService entryValidatorService, ProjectData project = null)
     {
@@ -28,6 +34,10 @@ public partial class AddOrEditProjectPopup : PopupPage
 
         _entryCheckBoxesCache = new Dictionary<RoleGroupEntryData, Entry>(rolesService.Roles.Count);
     }
+
+    #endregion
+
+    #region Page methods and events
 
     protected override void OnAppearing()
     {
@@ -152,4 +162,6 @@ public partial class AddOrEditProjectPopup : PopupPage
             }
         }
     }
+
+    #endregion
 }

@@ -7,6 +7,9 @@ using System.Data;
 
 namespace ProjectOOctopus.Data
 {
+    /// <summary>
+    /// Class holding information about project, its assigned roles and its respective members
+    /// </summary>
     public partial class ProjectData : ObservableObject, IEquatable<ProjectData?>, IDisposable
     {
         #region Properties
@@ -21,7 +24,7 @@ namespace ProjectOOctopus.Data
         [NotifyPropertyChangedFor(nameof(BackgroundColor))]
         private ObservableCollection<AssignedRoleCollection> _employeesByRoles = new ObservableCollection<AssignedRoleCollection>();
 
-        public Color BackgroundColor => EmployeesByRoles != null ? EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99333333") : Color.FromHex("#88AFAFAF") : Color.FromHex("#FFFFFF");
+        public Color BackgroundColor => EmployeesByRoles != null ? (EmployeesByRoles.All(n => n.TargetCount == n.Count) ? Color.FromHex("#99333333") : Color.FromHex("#88808080")) : Color.FromHex("#808080");
 
         #endregion
 
@@ -88,9 +91,14 @@ namespace ProjectOOctopus.Data
 
             if (reorder)
             {
-                RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
-                EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
+                ReOrderRoles();
             }
+        }
+
+        public void ReOrderRoles()
+        {
+            RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
+            EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
         }
 
 
@@ -99,14 +107,15 @@ namespace ProjectOOctopus.Data
             OnPropertyChanged(nameof(BackgroundColor));
         }
 
-        private void AddRoleGroup(AssignedRoleCollection role, bool reorder = false)
+        public void AddRoleGroup(AssignedRoleCollection role, bool reorder = false)
         {
+            if (EmployeesByRoles.Contains(role)) return;
+
             EmployeesByRoles.Add(role);
 
             if (reorder)
             {
-                RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
-                EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
+                ReOrderRoles();
             }
         }
 
@@ -139,8 +148,7 @@ namespace ProjectOOctopus.Data
 
             if (reorder)
             {
-                RolesService employeeRoleService = ServicesHelper.GetService<RolesService>();
-                EmployeesByRoles = new ObservableCollection<AssignedRoleCollection>(EmployeesByRoles.OrderBy(n => employeeRoleService.Roles.IndexOf(n.Role)));
+                ReOrderRoles();
             }
 
             collection.Dispose();

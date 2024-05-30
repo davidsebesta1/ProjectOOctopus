@@ -2,6 +2,9 @@
 
 namespace ProjectOOctopus.Data
 {
+    /// <summary>
+    /// Entry data for a role group and its target count. Roles are invidial objects in a project so it is not possible to store target amount inside of them.
+    /// </summary>
     public partial class RoleGroupEntryData : ObservableObject, IEquatable<RoleGroupEntryData?>
     {
         #region Properties

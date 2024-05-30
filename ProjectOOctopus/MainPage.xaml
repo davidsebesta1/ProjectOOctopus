@@ -14,8 +14,9 @@
             <MenuFlyoutItem Text="Manage roles" Command="{Binding OpenRoleManagerCommand}"/>
         </MenuBarItem>
 
-        <MenuBarItem Text="Export">
-            <MenuFlyoutItem Text="Excel" Command="{Binding ExportToExcelCommand}"/>
+        <MenuBarItem Text="Excel">
+            <MenuFlyoutItem Text="Export" Command="{Binding ExportToExcelCommand}"/>
+            <MenuFlyoutItem Text="Import" Command="{Binding ImportFromExcelCommand}"/>
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
@@ -42,7 +43,7 @@
                         <!-- Project template -->
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:ProjectData">
-                                <Frame HeightRequest="300" BackgroundColor="{StaticResource GrayscaleSM}" BorderColor="Transparent" CornerRadius="15" Padding="5">
+                                <Frame HeightRequest="300" BackgroundColor="{Binding BackgroundColor}" BorderColor="Transparent" CornerRadius="15" Padding="5">
 
                                     <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>

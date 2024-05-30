@@ -4,18 +4,32 @@ using System.Collections.ObjectModel;
 
 namespace ProjectOOctopus.Services
 {
+    /// <summary>
+    /// Service for managing all available roles for employees
+    /// All roles must be added into this service for them to be assigned and used without issues
+    /// </summary>
     public class RolesService
     {
         public event EventHandler<RoleRemovedEventArgs>? RoleRemovedEvent;
+
+        #region Properties
 
         public ObservableCollection<EmployeeRole> Roles { get; private set; } = new ObservableCollection<EmployeeRole>();
 
         private readonly CsvLoader _csvLoader;
 
+        #endregion
+
+        #region Ctor
+
         public RolesService(CsvLoader loader)
         {
             _csvLoader = loader;
         }
+
+        #endregion
+
+        #region Service Methods
 
         public async Task LoadBaseRoles()
         {
@@ -41,5 +55,7 @@ namespace ProjectOOctopus.Services
         {
             Roles.Clear();
         }
+
+        #endregion
     }
 }

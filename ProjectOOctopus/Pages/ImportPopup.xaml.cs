@@ -4,21 +4,21 @@ using ProjectOOctopus.Services;
 
 namespace ProjectOOctopus.Pages;
 
-public partial class ExportPopup : PopupPage
+public partial class ImportPopup : PopupPage
 {
     #region Properties
 
-    private string _exportString;
-    private ExcelExporterService _excelExporterService;
+    private string _importString;
+    private ExcelImporterService _excelImporterService;
 
     #endregion
 
     #region Ctor
 
-    public ExportPopup(ExcelExporterService excelService)
+    public ImportPopup(ExcelImporterService excelImporterService)
     {
         InitializeComponent();
-        _excelExporterService = excelService;
+        _excelImporterService = excelImporterService;
     }
 
     #endregion
@@ -30,6 +30,14 @@ public partial class ExportPopup : PopupPage
         base.OnAppearing();
 
         SetTargetPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+    }
+
+    private async void ImportButton_Clicked(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrEmpty(_importString) && File.Exists(_importString))
+        {
+            await _excelImporterService.Import(_importString);
+        }
     }
 
     private async void SelectPathButton_Clicked(object sender, EventArgs e)
@@ -45,16 +53,8 @@ public partial class ExportPopup : PopupPage
 
     private void SetTargetPath(string path)
     {
-        _exportString = path;
-        TargetDirectoryPathLabel.Text = _exportString;
-    }
-
-    private async void ExportButton_Clicked(object sender, EventArgs e)
-    {
-        if (!string.IsNullOrEmpty(_exportString) && Directory.Exists(_exportString))
-        {
-            await _excelExporterService.Export(_exportString);
-        }
+        _importString = path;
+        TargetDirectoryPathLabel.Text = _importString;
     }
 
     #endregion

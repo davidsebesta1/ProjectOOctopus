@@ -8,6 +8,9 @@ using System.Collections.ObjectModel;
 
 namespace ProjectOOctopus.ViewModels
 {
+    /// <summary>
+    /// ViewModel for the main page. Essentially a "backend" for pages. Handles communication from specified commands
+    /// </summary>
     public partial class MainPageViewModel : ObservableObject
     {
         #region Properties
@@ -118,6 +121,8 @@ namespace ProjectOOctopus.ViewModels
 
         #endregion
 
+        #region Other
+
         [RelayCommand]
         private async Task OpenRoleManager()
         {
@@ -132,6 +137,8 @@ namespace ProjectOOctopus.ViewModels
 
         #endregion
 
+        #endregion
+
         #region Import/Export
 
         [RelayCommand]
@@ -143,7 +150,7 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         public async Task ImportFromExcel()
         {
-            await _excelImporterService.Import("C:\\Users\\David\\Desktop\\ProjectOCtopusExportExample.xlsx");
+            await MopupService.Instance.PushAsync(new ImportPopup(_excelImporterService));
         }
 
         #endregion

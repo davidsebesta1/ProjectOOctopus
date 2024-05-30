@@ -6,6 +6,9 @@ using Color = Microsoft.Maui.Graphics.Color;
 
 namespace ProjectOOctopus.Data
 {
+    /// <summary>
+    /// A collection class holding information about which emplyoees are assigned to a role in project.
+    /// </summary>
     public partial class AssignedRoleCollection : ObservableObject, IEquatable<AssignedRoleCollection?>, IEnumerable<AssignedEmployeeData>, IDisposable
     {
         #region Properties

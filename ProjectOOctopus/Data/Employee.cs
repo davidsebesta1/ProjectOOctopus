@@ -6,6 +6,9 @@ using System.Collections.Specialized;
 
 namespace ProjectOOctopus.Data
 {
+    /// <summary>
+    /// A standard class for employee.
+    /// </summary>
     public partial class Employee : ObservableObject, IEquatable<Employee?>, IDisposable
     {
         #region Properties

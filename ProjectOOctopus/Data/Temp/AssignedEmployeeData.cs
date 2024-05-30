@@ -2,6 +2,10 @@
 
 namespace ProjectOOctopus.Data
 {
+
+    /// <summary>
+    /// Temporary class used to display employee data by its assignment
+    /// </summary>
     public partial class AssignedEmployeeData : ObservableObject, IEquatable<AssignedEmployeeData?>
     {
         #region Properties

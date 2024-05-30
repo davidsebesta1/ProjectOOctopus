@@ -7,6 +7,8 @@ namespace ProjectOOctopus.Pages;
 
 public partial class AssignEmployeePopup : PopupPage
 {
+    #region Properties
+
     private readonly ProjectData _projectData;
     private readonly Employee _employee;
     private readonly AssignedRoleCollection _projectGroup;
@@ -14,6 +16,10 @@ public partial class AssignEmployeePopup : PopupPage
     private readonly bool _edit;
 
     private EntryValidatorService _validatorService;
+
+    #endregion
+
+    #region Ctor
 
     public AssignEmployeePopup(Employee employee, ProjectData projectData, AssignedRoleCollection group, EntryValidatorService entryValidatorService, bool edit = false)
     {
@@ -25,6 +31,10 @@ public partial class AssignEmployeePopup : PopupPage
 
         _edit = edit;
     }
+
+    #endregion
+
+    #region Page methods and events
 
     protected override void OnAppearing()
     {
@@ -84,4 +94,6 @@ public partial class AssignEmployeePopup : PopupPage
 
         await MopupService.Instance.PopAsync();
     }
+
+    #endregion
 }

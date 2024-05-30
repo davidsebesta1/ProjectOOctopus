@@ -4,6 +4,9 @@ using ProjectOOctopus.Events;
 
 namespace ProjectOOctopus.Data
 {
+    /// <summary>
+    /// Employee role data class
+    /// </summary>
     public partial class EmployeeRole : ObservableObject, IEquatable<EmployeeRole?>
     {
         public event EventHandler<ColorChangedEvent> OnColorChangedEvent;

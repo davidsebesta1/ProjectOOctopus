@@ -1,16 +1,26 @@
-﻿using ProjectOOctopus.Data;
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using ProjectOOctopus.Data;
 using System.Globalization;
 
 namespace ProjectOOctopus.Services
 {
+    /// <summary>
+    /// Service class for exporting project data into .xmls file
+    /// </summary>
     public class ExcelExporterService
     {
         public const double CellWidth = 10d;
+
+        #region Properties
+
         private EmployeesService _employeesService;
         private ProjectsService _projectsService;
         private RolesService _rolesService;
+
+        #endregion
+
+        #region Ctor
 
         public ExcelExporterService(EmployeesService employeesService, ProjectsService projectsService, RolesService rolesService)
         {
@@ -18,6 +28,10 @@ namespace ProjectOOctopus.Services
             _projectsService = projectsService;
             _rolesService = rolesService;
         }
+
+        #endregion
+
+        #region Service Methods
 
         public async Task Export(string path)
         {
@@ -154,39 +168,42 @@ namespace ProjectOOctopus.Services
             int currentRowIndex = startingRowIndex;
 
             //Project name
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Value = projectData.ProjectName;
+            ExcelRange prNameCell = worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6];
+            prNameCell.Value = projectData.ProjectName;
 
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.WrapText = true;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Merge = true;
+            prNameCell.Style.WrapText = true;
+            prNameCell.Merge = true;
 
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(15263976));
+            prNameCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            prNameCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(15263976));
 
             currentRowIndex++;
 
             //Project description
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Value = projectData.ProjectDescription;
+            ExcelRange prDescriptionCell = worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6];
+            prDescriptionCell.Value = projectData.ProjectDescription;
 
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.WrapText = true;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Merge = true;
+            prDescriptionCell.Style.WrapText = true;
+            prDescriptionCell.Merge = true;
 
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(15263976));
+            prDescriptionCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            prDescriptionCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(15263976));
 
             currentRowIndex++;
 
             //Header
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(10197915));
+            ExcelRange prHeaderCell = worksheet.Cells[currentRowIndex, 1, currentRowIndex, 6];
+            prHeaderCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            prHeaderCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(10197915));
 
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 2].Value = "Role";
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex, 2].Merge = true;
+            prHeaderCell.Value = "Role";
+            prHeaderCell.Merge = true;
 
-            worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4].Value = "Employee Name";
-            worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4].Merge = true;
+            prHeaderCell.Value = "Employee Name";
+            prHeaderCell.Merge = true;
 
-            worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Value = "Employee Assignment %";
-            worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Merge = true;
+            prHeaderCell.Value = "Employee Assignment %";
+            prHeaderCell.Merge = true;
 
             currentRowIndex++;
 
@@ -199,21 +216,24 @@ namespace ProjectOOctopus.Services
                 {
                     int endRowIndex = currentRowIndex + col.TargetCount - 1;
 
-                    worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Value = $"No employee{(col.TargetCount > 1 ? "s" : string.Empty)} assigned";
-                    worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Style.WrapText = true;
-                    worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Merge = true;
-                    worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    ExcelRange noEmpCell = worksheet.Cells[startRowIndex, 3, endRowIndex, 6];
+                    noEmpCell.Value = $"No employee{(col.TargetCount > 1 ? "s" : string.Empty)} assigned";
+                    noEmpCell.Style.WrapText = true;
+                    noEmpCell.Merge = true;
+                    noEmpCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    noEmpCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    noEmpCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    noEmpCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(16773062));
 
+                    ExcelRange roleCell = worksheet.Cells[startRowIndex, 1, endRowIndex, 2];
+                    roleCell.Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
+                    roleCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    roleCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
+                    roleCell.Style.WrapText = true;
+                    roleCell.Merge = true;
 
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.WrapText = true;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Merge = true;
-
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    roleCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    roleCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
                     currentRowIndex += col.TargetCount;
                 }
@@ -222,34 +242,39 @@ namespace ProjectOOctopus.Services
                     //Employee name and assignment
                     foreach (AssignedEmployeeData employee in col.Employees)
                     {
-                        worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4].Value = employee.Employee.FullName;
-                        worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4].Style.WrapText = true;
-                        worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4].Merge = true;
 
-                        worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Value = employee.Employee.GetAssignentUsage(projectData, col) + "%";
-                        worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                        worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                        worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Merge = true;
+                        ExcelRange nameCell = worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4];
+                        nameCell.Value = employee.Employee.FullName;
+                        nameCell.Style.WrapText = true;
+                        nameCell.Merge = true;
+
+                        ExcelRange assignmentCell = worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6];
+                        assignmentCell.Value = employee.Employee.GetAssignentUsage(projectData, col) + "%";
+                        assignmentCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        assignmentCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                        assignmentCell.Merge = true;
 
                         //Assignment warning over 100%
                         if (employee.Employee.TotalAssignmentUsage > 100)
                         {
-                            worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                            worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(16249906));
+                            assignmentCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            assignmentCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(16249906));
                         }
 
                         currentRowIndex++;
                     }
 
                     int endRowIndex = currentRowIndex - 1;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.WrapText = true;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Merge = true;
 
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    ExcelRange roleCell = worksheet.Cells[startRowIndex, 1, endRowIndex, 2];
+                    roleCell.Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
+                    roleCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    roleCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
+                    roleCell.Style.WrapText = true;
+                    roleCell.Merge = true;
+
+                    roleCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    roleCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                 }
             }
 
@@ -303,35 +328,41 @@ namespace ProjectOOctopus.Services
 
             int totalRequiredRows = employee._assignmentsPerctangeByProject.Sum(n => n.Value.Count) - 1;
 
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2].Value = employee.FullName;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2].Style.WrapText = true;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2].Merge = true;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            ExcelRange empCell = worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2];
+            empCell.Value = employee.FullName;
+            empCell.Style.WrapText = true;
+            empCell.Merge = true;
+            empCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+            empCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
             foreach (var kvp in employee._assignmentsPerctangeByProject)
             {
                 if (kvp.Value.Count == 0) continue;
 
                 int projectRequiredRows = kvp.Value.Count - 1;
-                worksheet.Cells[currentRowIndex, 3, currentRowIndex + projectRequiredRows, 4].Value = kvp.Key.ProjectName;
-                worksheet.Cells[currentRowIndex, 3, currentRowIndex + projectRequiredRows, 4].Style.WrapText = true;
-                worksheet.Cells[currentRowIndex, 3, currentRowIndex + projectRequiredRows, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                worksheet.Cells[currentRowIndex, 3, currentRowIndex + projectRequiredRows, 4].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                worksheet.Cells[currentRowIndex, 3, currentRowIndex + projectRequiredRows, 4].Merge = true;
+
+                ExcelRange prNameCell = worksheet.Cells[currentRowIndex, 3, currentRowIndex + projectRequiredRows, 4];
+                prNameCell.Value = kvp.Key.ProjectName;
+                prNameCell.Style.WrapText = true;
+                prNameCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                prNameCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                prNameCell.Merge = true;
 
                 foreach (var roleKvp in kvp.Value)
                 {
-                    worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Value = roleKvp.Key.Role.Name;
-                    worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(roleKvp.Key.Role.Color.ToInt()));
-                    worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Merge = true;
 
-                    worksheet.Cells[currentRowIndex, 7].Value = roleKvp.Value + "%";
-                    worksheet.Cells[currentRowIndex, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[currentRowIndex, 7].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                    worksheet.Cells[currentRowIndex, 7].Merge = true;
+                    ExcelRange roleNameCell = worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6];
+                    roleNameCell.Value = roleKvp.Key.Role.Name;
+                    roleNameCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    roleNameCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    roleNameCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(roleKvp.Key.Role.Color.ToInt()));
+                    roleNameCell.Merge = true;
+
+                    ExcelRange assignmentCellLocal = worksheet.Cells[currentRowIndex, 7];
+                    assignmentCellLocal.Value = roleKvp.Value + "%";
+                    assignmentCellLocal.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    assignmentCellLocal.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    assignmentCellLocal.Merge = true;
 
                     currentRowIndex++;
                 }
@@ -343,12 +374,13 @@ namespace ProjectOOctopus.Services
             else if (employee.TotalAssignmentUsage > 100) textColor = System.Drawing.Color.FromArgb(-536287);
             else textColor = System.Drawing.Color.FromArgb(-12527265);
 
-            worksheet.Cells[currentRowIndex, 7].Value = employee.TotalAssignmentUsage + "%";
-            worksheet.Cells[currentRowIndex, 7].Style.Font.Color.SetColor(textColor);
-            worksheet.Cells[currentRowIndex, 7].Style.Font.Bold = true;
-            worksheet.Cells[currentRowIndex, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-            worksheet.Cells[currentRowIndex, 7].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-            worksheet.Cells[currentRowIndex, 7].Merge = true;
+            ExcelRange assignmentCell = worksheet.Cells[currentRowIndex, 7];
+            assignmentCell.Value = employee.TotalAssignmentUsage + "%";
+            assignmentCell.Style.Font.Color.SetColor(textColor);
+            assignmentCell.Style.Font.Bold = true;
+            assignmentCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            assignmentCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            assignmentCell.Merge = true;
 
             currentRowIndex++;
 
@@ -357,11 +389,12 @@ namespace ProjectOOctopus.Services
 
         private int WriteKnownRoles(ExcelWorksheet worksheet, Employee employee, int currentRowIndex)
         {
-            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Value = employee.FullName;
-            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Style.WrapText = true;
-            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Merge = true;
-            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            ExcelRange empNameCell = worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12];
+            empNameCell.Value = employee.FullName;
+            empNameCell.Style.WrapText = true;
+            empNameCell.Merge = true;
+            empNameCell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            empNameCell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
             for (int i = 0; i < employee.Roles.Count; i++)
             {
@@ -376,5 +409,7 @@ namespace ProjectOOctopus.Services
 
             return currentRowIndex + 1;
         }
+
+        #endregion
     }
 }

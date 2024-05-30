@@ -1,6 +1,10 @@
 ﻿
 namespace ProjectOOctopus.Services
 {
+    /// <summary>
+    /// Service class for validation entries by custom lambda functions.
+    /// Any registration automatically detects whenever entry text changed, validates it, and sets visibility for error text if neccesary.
+    /// </summary>
     public class EntryValidatorService
     {
         private readonly Dictionary<string, bool> _validationValues = new Dictionary<string, bool>();

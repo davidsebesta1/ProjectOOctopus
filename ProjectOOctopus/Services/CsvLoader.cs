@@ -2,6 +2,9 @@
 
 namespace ProjectOOctopus.Services
 {
+    /// <summary>
+    /// Service class for loading base roles from a csv file in lib directory
+    /// </summary>
     public class CsvLoader
     {
         public async IAsyncEnumerable<EmployeeRole> LoadBaseRoles()

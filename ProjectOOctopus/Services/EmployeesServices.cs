@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 
 namespace ProjectOOctopus.Services
 {
+    /// <summary>
+    /// Service class managing employees, every employee must be added to this service for application functions to work properly.
+    /// </summary>
     public class EmployeesService
     {
         private ProjectsService _projectsService;

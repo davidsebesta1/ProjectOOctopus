@@ -7,10 +7,20 @@ using ProjectOOctopus.ViewModels;
 
 namespace ProjectOOctopus
 {
+    /// <summary>
+    /// Starting class of the Maui application
+    /// </summary>
     public static class MauiProgram
     {
+        /// <summary>
+        /// Static application instance singleton
+        /// </summary>
         public static MauiApp AppInstance { get; private set; }
 
+        /// <summary>
+        /// Creator method with decorator pattern
+        /// </summary>
+        /// <returns></returns>
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
