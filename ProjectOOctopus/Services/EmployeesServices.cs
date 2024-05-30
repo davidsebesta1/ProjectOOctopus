@@ -14,7 +14,7 @@ namespace ProjectOOctopus.Services
 
         private string _currentSearch = string.Empty;
 
-        private readonly ObservableCollection<Employee> _allEmployees = new ObservableCollection<Employee>();
+        public readonly ObservableCollection<Employee> _allEmployees = new ObservableCollection<Employee>();
         public ObservableCollection<Employee> Employees { get; private set; } = new ObservableCollection<Employee>();
 
         public bool HideEmployeeIfFullyAssigned = false;

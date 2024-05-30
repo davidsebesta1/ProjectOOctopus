@@ -9,7 +9,7 @@ namespace ProjectOOctopus.Services
 
         private string _currentSearch = string.Empty;
 
-        private readonly ObservableCollection<ProjectData> _allProjects = new ObservableCollection<ProjectData>();
+        public readonly ObservableCollection<ProjectData> _allProjects = new ObservableCollection<ProjectData>();
         public ObservableCollection<ProjectData> Projects { get; private set; } = new ObservableCollection<ProjectData>();
 
         public void AddProject(ProjectData project)
@@ -21,6 +21,8 @@ namespace ProjectOOctopus.Services
 
         public void RemoveProject(ProjectData project)
         {
+            project.RemoveAllEmployees();
+
             _allProjects.Remove(project);
             Projects.Remove(project);
 

@@ -12,7 +12,7 @@
                 <StackLayout Padding="5">
                     <Label Text="Project Name*" FontSize="18" TextColor="White"/>
                     <Entry x:Name="ProjectNameEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="PrNameErrText" Text="Name must not be empty" IsVisible="False"  TextColor="#FF5555"/>
+                    <Label x:Name="PrNameErrText" Text="Project name must not be empty" IsVisible="False"  TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 
@@ -20,7 +20,7 @@
                 <StackLayout Padding="5">
                     <Label Text="Project Description*" FontSize="18" TextColor="White"/>
                     <Entry x:Name="ProjectDescriptionEntry" Keyboard="Text" TextColor="White" FontSize="16"/>
-                    <Label x:Name="PrDescErrText" Text="Last name must be filled" IsVisible="False"  TextColor="#FF5555"/>
+                    <Label x:Name="PrDescErrText" Text="Description must be filled" IsVisible="False"  TextColor="#FF5555"/>
                 </StackLayout>
             </Frame>
 

@@ -53,6 +53,19 @@ namespace ProjectOOctopus.Data
 
         #region Project methods
 
+        public void RemoveAllEmployees()
+        {
+            foreach (AssignedRoleCollection col in EmployeesByRoles)
+            {
+                while (col.Employees.Count > 0)
+                {
+                    AssignedEmployeeData emp = col.Employees[0];
+                    emp.Employee.SetAssigmentUsage(this, col, 0);
+                    col.Remove(emp);
+                }
+            }
+        }
+
         public void RemoveEmployeeFromAllRoles(Employee employee)
         {
             foreach (AssignedRoleCollection role in EmployeesByRoles)
