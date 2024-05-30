@@ -15,7 +15,8 @@ namespace ProjectOOctopus.ViewModels
         private readonly EmployeesService _employeesService;
         private readonly ProjectsService _projectsService;
         private readonly RolesService _rolesService;
-        private readonly ExcelService _excelService;
+        private readonly ExcelExporterService _excelExporterService;
+        private readonly ExcelImporterService _excelImporterService;
 
         [ObservableProperty]
         private ObservableCollection<Employee> _employees;
@@ -29,7 +30,7 @@ namespace ProjectOOctopus.ViewModels
 
         #region Ctor
 
-        public MainPageViewModel(EmployeesService empService, ProjectsService projectsService, RolesService rolesService, RoleManagerPopup roleManagerPopup, ExcelService excelService)
+        public MainPageViewModel(EmployeesService empService, ProjectsService projectsService, RolesService rolesService, RoleManagerPopup roleManagerPopup, ExcelExporterService excelExporterService, ExcelImporterService excelImporterService)
         {
             _employeesService = empService;
             _projectsService = projectsService;
@@ -39,7 +40,8 @@ namespace ProjectOOctopus.ViewModels
 
             Projects = _projectsService.Projects;
             Employees = _employeesService.Employees;
-            _excelService = excelService;
+            _excelExporterService = excelExporterService;
+            _excelImporterService = excelImporterService;
         }
 
         #endregion
@@ -130,12 +132,18 @@ namespace ProjectOOctopus.ViewModels
 
         #endregion
 
-        #region Export
+        #region Import/Export
 
         [RelayCommand]
         public async Task ExportToExcel()
         {
-            await MopupService.Instance.PushAsync(new ExportPopup(_excelService));
+            await MopupService.Instance.PushAsync(new ExportPopup(_excelExporterService));
+        }
+
+        [RelayCommand]
+        public async Task ImportFromExcel()
+        {
+            await _excelImporterService.Import("C:\\Users\\David\\Desktop\\ProjectOCtopusExportExample.xlsx");
         }
 
         #endregion

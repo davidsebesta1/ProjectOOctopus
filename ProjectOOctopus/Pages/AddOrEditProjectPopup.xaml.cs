@@ -74,9 +74,12 @@ public partial class AddOrEditProjectPopup : PopupPage
             return;
         }
 
+        string prName = ProjectNameEntry.Text.Trim();
+        string prDescription = ProjectDescriptionEntry.Text.Trim();
+
         if (_project == null)
         {
-            _project = new ProjectData(ProjectNameEntry.Text, ProjectDescriptionEntry.Text);
+            _project = new ProjectData(prName, prDescription);
             foreach (RoleGroupEntryData role in RolesCollectionView.SelectedItems.Cast<RoleGroupEntryData>())
             {
                 _project.AddRoleGroup(role.Role, role.TargetAmount);
@@ -87,8 +90,8 @@ public partial class AddOrEditProjectPopup : PopupPage
         }
         else
         {
-            _project.ProjectName = ProjectNameEntry.Text;
-            _project.ProjectDescription = ProjectDescriptionEntry.Text;
+            _project.ProjectName = prName;
+            _project.ProjectDescription = prDescription;
 
             var addedGroups = RolesCollectionView.SelectedItems.Cast<RoleGroupEntryData>().Where(role => !_project.EmployeesByRoles.Any(group => group.Role == role.Role)).ToList();
             var removedGroups = _project.EmployeesByRoles.Where(group => !RolesCollectionView.SelectedItems.Cast<RoleGroupEntryData>().Any(n => group.Role == n.Role)).ToList();
@@ -97,8 +100,12 @@ public partial class AddOrEditProjectPopup : PopupPage
             //Handle edited
             foreach (AssignedRoleCollection assignedCollection in editedGroups)
             {
-                Entry entry = _entryCheckBoxesCache[new RoleGroupEntryData(assignedCollection.Role, 0)];
-                if (entry != null) assignedCollection.TargetCount = int.Parse(entry.Text);
+                if (!_entryCheckBoxesCache.TryGetValue(new RoleGroupEntryData(assignedCollection.Role, 0), out Entry entry))
+                {
+                    assignedCollection.TargetCount = 0;
+                    continue;
+                }
+                assignedCollection.TargetCount = int.Parse(entry.Text);
             }
 
             //Handle added

@@ -7,12 +7,12 @@ namespace ProjectOOctopus.Pages;
 public partial class ExportPopup : PopupPage
 {
     private string _exportString;
-    private ExcelService _excelService;
+    private ExcelExporterService _excelExporterService;
 
-    public ExportPopup(ExcelService excelService)
+    public ExportPopup(ExcelExporterService excelService)
     {
         InitializeComponent();
-        _excelService = excelService;
+        _excelExporterService = excelService;
     }
 
     protected override void OnAppearing()
@@ -43,7 +43,7 @@ public partial class ExportPopup : PopupPage
     {
         if (!string.IsNullOrEmpty(_exportString) && Directory.Exists(_exportString))
         {
-            await _excelService.Export(_exportString);
+            await _excelExporterService.Export(_exportString);
         }
     }
 }

@@ -59,14 +59,15 @@ public partial class AddOrEditRolePopup : PopupPage
             return;
         }
 
+        string roleName = RoleNameEntry.Text.Trim();
         if (_role == null)
         {
-            _role = new EmployeeRole(RoleNameEntry.Text, PreviewColorFrame.BackgroundColor);
+            _role = new EmployeeRole(roleName, PreviewColorFrame.BackgroundColor);
             _rolesService.AddRole(_role);
         }
         else
         {
-            _role.Name = RoleNameEntry.Text;
+            _role.Name = roleName;
             _role.Color = PreviewColorFrame.BackgroundColor;
         }
 

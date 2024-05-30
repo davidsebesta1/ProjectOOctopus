@@ -67,11 +67,11 @@ public partial class AddOrEditEmployeePopup : PopupPage
             return;
         }
 
+        string firstname = EmpFirstNameEntry.Text.Trim();
+        string lastname = EmpLastNameEntry.Text.Trim();
         if (_employee == null)
         {
             ObservableCollection<EmployeeRole> _roles = new ObservableCollection<EmployeeRole>();
-            string firstname = EmpFirstNameEntry.Text;
-            string lastname = EmpLastNameEntry.Text;
 
             foreach (EmployeeRole role in RolesCollectionView.SelectedItems.Cast<EmployeeRole>())
             {
@@ -83,8 +83,8 @@ public partial class AddOrEditEmployeePopup : PopupPage
         }
         else
         {
-            _employee.FirstName = EmpFirstNameEntry.Text;
-            _employee.LastName = EmpLastNameEntry.Text;
+            _employee.FirstName = firstname;
+            _employee.LastName = lastname;
 
             _employee.Roles.Clear();
             foreach (EmployeeRole role in RolesCollectionView.SelectedItems.Cast<EmployeeRole>())

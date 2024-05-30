@@ -1,20 +1,18 @@
 ﻿using ProjectOOctopus.Data;
-using System.Data;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Globalization;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ProjectOOctopus.Services
 {
-    public class ExcelService
+    public class ExcelExporterService
     {
         public const double CellWidth = 10d;
         private EmployeesService _employeesService;
         private ProjectsService _projectsService;
         private RolesService _rolesService;
 
-        public ExcelService(EmployeesService employeesService, ProjectsService projectsService, RolesService rolesService)
+        public ExcelExporterService(EmployeesService employeesService, ProjectsService projectsService, RolesService rolesService)
         {
             _employeesService = employeesService;
             _projectsService = projectsService;
@@ -36,24 +34,24 @@ namespace ProjectOOctopus.Services
                 using (ExcelPackage package = new ExcelPackage())
                 {
                     #region Projects
-                    using ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Projects");
+                    using ExcelWorksheet worksheetProjects = package.Workbook.Worksheets.Add("Projects");
 
-                    WriteExportHeader(worksheet);
+                    WriteExportHeader(worksheetProjects);
 
                     int curRowIndexProjects = 3;
                     foreach (ProjectData projectData in _projectsService._allProjects)
                     {
-                        curRowIndexProjects = WriteProjectData(worksheet, projectData, curRowIndexProjects) + 1;
+                        curRowIndexProjects = WriteProjectData(worksheetProjects, projectData, curRowIndexProjects) + 1;
                     }
 
                     for (int i = 1; i < 7; i++)
                     {
-                        worksheet.Column(i).Width = CellWidth;
+                        worksheetProjects.Column(i).Width = CellWidth;
                     }
 
                     #endregion
 
-                    #region Employees
+                    #region Employees and Known Roles
 
                     using ExcelWorksheet worksheetEmployees = package.Workbook.Worksheets.Add("Employees");
 
@@ -83,6 +81,8 @@ namespace ProjectOOctopus.Services
                     //Assignment
                     worksheetEmployees.Cells[curRowIndexEmployees, 7].Value = "Assignment";
 
+
+                    //Writing employees
                     curRowIndexEmployees++;
                     foreach (Employee employee in _employeesService._allEmployees)
                     {
@@ -92,6 +92,41 @@ namespace ProjectOOctopus.Services
                     for (int i = 1; i < 8; i++)
                     {
                         worksheetEmployees.Column(i).Width = CellWidth;
+                    }
+
+                    int curRowKnownRolesIndex = 3;
+                    int maxRolesCount = _employeesService._allEmployees.Any() ? _employeesService._allEmployees.Max(n => n.Roles.Count) : 0;
+
+                    //Header
+                    ExcelRange headerCellsAllRoles = worksheetEmployees.Cells[curRowKnownRolesIndex, 11, curRowKnownRolesIndex, 13 + maxRolesCount];
+                    headerCellsAllRoles.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    headerCellsAllRoles.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(10197915));
+
+                    //Known role name
+                    ExcelRange headerKnownRoleNameCells = worksheetEmployees.Cells[curRowKnownRolesIndex, 11, curRowKnownRolesIndex, 12];
+                    headerKnownRoleNameCells.Value = "Employee Name";
+                    headerKnownRoleNameCells.Merge = true;
+                    headerKnownRoleNameCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    headerKnownRoleNameCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+                    //Known roles
+                    ExcelRange headerRolesCells = worksheetEmployees.Cells[curRowKnownRolesIndex, 13, curRowKnownRolesIndex, 13 + maxRolesCount];
+                    headerRolesCells.Value = "Roles";
+                    headerRolesCells.Merge = true;
+                    headerRolesCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    headerRolesCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+                    curRowKnownRolesIndex++;
+
+                    //Writing known roles
+                    foreach (Employee employee in _employeesService._allEmployees)
+                    {
+                        curRowKnownRolesIndex = WriteKnownRoles(worksheetEmployees, employee, curRowKnownRolesIndex) + 1;
+                    }
+
+                    for (int i = 11; i < 13 + maxRolesCount; i++)
+                    {
+                        worksheetEmployees.Column(i).Width = CellWidth * (i >= 13 ? 1.5d : 1d);
                     }
 
                     #endregion
@@ -106,11 +141,6 @@ namespace ProjectOOctopus.Services
             {
                 await Shell.Current.DisplayAlert("Export", ex.GetBaseException().Message, "Okay");
             }
-        }
-
-        public async Task Import(string fullPath)
-        {
-
         }
 
         private void WriteExportHeader(ExcelWorksheet worksheet)
@@ -236,18 +266,24 @@ namespace ProjectOOctopus.Services
                 ExcelRange empName = worksheet.Cells[currentRowIndex, 1, currentRowIndex, 2];
                 empName.Value = employee.FullName;
                 empName.Merge = true;
+                empName.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                empName.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
                 ExcelRange prNameCells = worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4];
                 prNameCells.Value = "-";
                 prNameCells.Merge = true;
+                prNameCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                prNameCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
                 ExcelRange roleNameCells = worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6];
                 roleNameCells.Value = "-";
                 roleNameCells.Merge = true;
+                roleNameCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                roleNameCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
                 ExcelRange roleAssignmentCells = worksheet.Cells[currentRowIndex, 7];
                 roleAssignmentCells.Value = "-";
-                roleAssignmentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                roleAssignmentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 roleAssignmentCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                 roleAssignmentCells.Merge = true;
 
@@ -317,6 +353,28 @@ namespace ProjectOOctopus.Services
             currentRowIndex++;
 
             return currentRowIndex;
+        }
+
+        private int WriteKnownRoles(ExcelWorksheet worksheet, Employee employee, int currentRowIndex)
+        {
+            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Value = employee.FullName;
+            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Style.WrapText = true;
+            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Merge = true;
+            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Cells[currentRowIndex, 11, currentRowIndex, 12].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+            for (int i = 0; i < employee.Roles.Count; i++)
+            {
+                EmployeeRole role = employee.Roles[i];
+                ExcelRange cell = worksheet.Cells[currentRowIndex, 13 + i];
+                cell.Value = role.Name;
+                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                cell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(role.Color.ToInt()));
+                cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                cell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            }
+
+            return currentRowIndex + 1;
         }
     }
 }
