@@ -4,6 +4,7 @@
              xmlns:viewmodel="clr-namespace:ProjectOOctopus.ViewModels"
              xmlns:data="clr-namespace:ProjectOOctopus.Data"
              Title=""
+             Shell.BackgroundColor="{StaticResource GreenSM}"
              x:DataType="viewmodel:MainPageViewModel"
              x:Class="ProjectOOctopus.MainPage">
 
@@ -23,13 +24,13 @@
         <Grid ColumnDefinitions="*, 325" RowDefinitions="*">
 
             <!-- Left projects panel -->
-            <Frame Grid.Column="0" BackgroundColor="Transparent" CornerRadius="0" BorderColor="#939393" Padding="10">
+            <Frame Grid.Column="0" BackgroundColor="#222222" CornerRadius="0" BorderColor="#939393" Padding="10">
                 <Grid RowDefinitions="50, *, 50">
 
                     <!-- Top label and search project entry -->
                     <VerticalStackLayout Grid.Row="0">
-                        <Label Text="Projects" TextColor="#CC999999" FontAttributes="Italic" HorizontalOptions="Start" HeightRequest="20"/>
-                        <Entry Placeholder="Search by project name..." PlaceholderColor="#999999" HeightRequest="25" VerticalOptions="Start" FontAttributes="Italic" FontSize="16" Margin="-12,0,0,0" TextChanged="SearchProjectByName_TextChanged"/>
+                        <Label Text="Projects" TextColor="White" FontAttributes="Italic" HorizontalOptions="Start" HeightRequest="20"/>
+                        <Entry Placeholder="Search by project name..." PlaceholderColor="White" HeightRequest="25" VerticalOptions="Start" FontAttributes="Italic" FontSize="16" Margin="-12,0,0,0" TextChanged="SearchProjectByName_TextChanged"/>
                     </VerticalStackLayout>
 
 
@@ -41,7 +42,7 @@
                         <!-- Project template -->
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="data:ProjectData">
-                                <Frame HeightRequest="300" BackgroundColor="{Binding BackgroundColor}" BorderColor="Transparent" CornerRadius="5" Padding="5">
+                                <Frame HeightRequest="300" BackgroundColor="{StaticResource GrayscaleSM}" BorderColor="Transparent" CornerRadius="15" Padding="5">
 
                                     <!-- Right click menu-->
                                     <FlyoutBase.ContextFlyout>
@@ -127,13 +128,13 @@
             </Frame>
 
             <!-- Right side bar -->
-            <Frame Grid.Column="1" Padding="10" CornerRadius="0" BorderColor="#88AFAFAF" BackgroundColor="Transparent" Margin="-1, 0, 0, 0">
+            <Frame Grid.Column="1" Padding="10" CornerRadius="0" BorderColor="#88AFAFAF" BackgroundColor="#222222" Margin="-1, 0, 0, 0">
                 <Grid ColumnDefinitions="*" RowDefinitions="50, *, 65">
 
                     <!-- Top description and search -->
                     <VerticalStackLayout Grid.Row="0">
-                        <Label Text="Employees" TextColor="#CC999999" FontAttributes="Italic" HorizontalOptions="End" HeightRequest="20" Margin="0,0,10,0"/>
-                        <Entry Placeholder="Search by employee name..." PlaceholderColor="#999999" HeightRequest="25" VerticalOptions="End" FontAttributes="Italic" FontSize="16" Margin="0" TextChanged="SearchEmployeeByName_TextChanged"/>
+                        <Label Text="Employees" TextColor="White" FontAttributes="Italic" HorizontalOptions="End" HeightRequest="20" Margin="0,0,10,0"/>
+                        <Entry Placeholder="Search by employee name..." PlaceholderColor="White" HeightRequest="25" VerticalOptions="End" FontAttributes="Italic" FontSize="16" Margin="0" TextChanged="SearchEmployeeByName_TextChanged"/>
                     </VerticalStackLayout>
 
                     <!-- All Employees -->
@@ -149,9 +150,9 @@
                                     <!-- Background Gradient -->
                                     <Frame.Background>
                                         <LinearGradientBrush EndPoint="1,0">
-                                            <GradientStop Color="{Binding BackgroundFrameColorAssigned}" Offset="{Binding AssignmentUsage01}" />
-                                            <GradientStop Color="{Binding BackgroundFrameColorUnAssigned}" Offset="{Binding AssignmentUsageBlock}" />
-                                            <GradientStop Color="{Binding BackgroundFrameColorUnAssigned}" Offset="1.0" />
+                                            <GradientStop Color="{StaticResource GreenDarkerSM}" Offset="{Binding AssignmentUsage01}" />
+                                            <GradientStop Color="{StaticResource GreenSM}" Offset="{Binding AssignmentUsageBlock}" />
+                                            <GradientStop Color="{StaticResource GreenSM}" Offset="1.0" />
                                         </LinearGradientBrush>
                                     </Frame.Background>
 
@@ -196,7 +197,7 @@
                     <!-- Add Employee Button -->
                     <Grid Grid.Row="2">
                         <HorizontalStackLayout Margin="15,0,0,15">
-                            <CheckBox CheckedChanged="EmployeeHideByUsageCheckbox_Changed" Color="{StaticResource PrimaryDark}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <CheckBox CheckedChanged="EmployeeHideByUsageCheckbox_Changed" Color="{StaticResource GreenSM}" HorizontalOptions="Center" VerticalOptions="Center"/>
                             <Label Text="Hide fully assigned" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
                         </HorizontalStackLayout>
                         <Button HorizontalOptions="End" WidthRequest="50" FontSize="48" Padding="0" Text="+" Command="{Binding AddEmployeeCommand}" Margin="0, 0, 15, 15"/>
