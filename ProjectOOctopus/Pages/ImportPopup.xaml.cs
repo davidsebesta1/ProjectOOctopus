@@ -28,8 +28,6 @@ public partial class ImportPopup : PopupPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-
-        SetTargetPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
     }
 
     private async void ImportButton_Clicked(object sender, EventArgs e)
@@ -37,17 +35,20 @@ public partial class ImportPopup : PopupPage
         if (!string.IsNullOrEmpty(_importString) && File.Exists(_importString))
         {
             await _excelImporterService.Import(_importString);
+            await Shell.Current.DisplayAlert("Import", "Import successful", "Okay");
         }
     }
 
     private async void SelectPathButton_Clicked(object sender, EventArgs e)
     {
-        CancellationToken token = new CancellationToken();
-
-        FolderPickerResult result = await FolderPicker.Default.PickAsync(token);
-        if (result.IsSuccessful)
+        FileResult result = await FilePicker.Default.PickAsync();
+        if (result != null && result.FullPath.EndsWith(".xlsx"))
         {
-            SetTargetPath(result.Folder.Path);
+            SetTargetPath(result.FullPath);
+        }
+        else
+        {
+            await Shell.Current.DisplayAlert("Import", "Importing file must be of type 'xlsx'", "Okay");
         }
     }
 

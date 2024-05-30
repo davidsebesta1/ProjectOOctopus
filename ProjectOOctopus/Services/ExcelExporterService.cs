@@ -6,7 +6,7 @@ using System.Globalization;
 namespace ProjectOOctopus.Services
 {
     /// <summary>
-    /// Service class for exporting project data into .xmls file
+    /// Service class for exporting project data into .xlsx file
     /// </summary>
     public class ExcelExporterService
     {

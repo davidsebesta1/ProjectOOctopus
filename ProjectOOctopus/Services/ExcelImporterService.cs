@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace ProjectOOctopus.Services
 {
     /// <summary>
-    /// Service class for handling import from .xmls into project
+    /// Service class for handling import from .xlsx into project
     /// </summary>
     public class ExcelImporterService
     {

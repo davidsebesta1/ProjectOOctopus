@@ -154,5 +154,22 @@ namespace ProjectOOctopus.ViewModels
         }
 
         #endregion
+
+        #region Info & Help
+
+        [RelayCommand]
+        public async Task OpenInfoPopup()
+        {
+            await MopupService.Instance.PushAsync(new InfoPopup());
+        }
+
+        [RelayCommand]
+        public async void SafeRestartApp()
+        {
+            string tmpPath = Path.Combine(Path.GetTempPath(), "projectooctopussaferestart.xlsx");
+            await _excelExporterService.Export(tmpPath);
+        }
+
+        #endregion
     }
 }

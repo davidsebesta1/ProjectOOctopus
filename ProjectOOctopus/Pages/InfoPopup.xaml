@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectOOctopus.Pages.InfoPopup"
+             xmlns:mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+             BackgroundColor="#88000000"
+             Title="InfoPopup">
+
+    <Frame WidthRequest="300" HeightRequest="200" BackgroundColor="#EE333333" Padding="15">
+        <VerticalStackLayout Spacing="20" Padding="0,15,0,0">
+            <Label Text="Project Organization Octopus" FontSize="18" HorizontalOptions="Start"/>
+            <Label Text="Created by David Šebesta, Mark Balega and Project Leader Jiří Kortánek" FontSize="16" HorizontalOptions="Start"/>
+        </VerticalStackLayout>
+    </Frame>
+</mopups:PopupPage>

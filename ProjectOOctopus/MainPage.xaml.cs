@@ -36,6 +36,12 @@ namespace ProjectOOctopus
             base.OnAppearing();
 
             await _viewModel.LoadBaseRolesCommand.ExecuteAsync(null);
+
+            string tmpPath = Path.Combine(Path.GetTempPath(), "projectooctopussaferestart.xlsx");
+            if (File.Exists(tmpPath))
+            {
+                await ServicesHelper.GetService<ExcelImporterService>().Import(tmpPath);
+            }
         }
 
         private void DragStartEmployee(object sender, DragStartingEventArgs e)
