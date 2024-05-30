@@ -135,7 +135,7 @@ namespace ProjectOOctopus.ViewModels
         [RelayCommand]
         public async Task ExportToExcel()
         {
-            await _excelService.Test();
+            await MopupService.Instance.PushAsync(new ExportPopup(_excelService));
         }
 
         #endregion

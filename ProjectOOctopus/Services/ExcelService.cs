@@ -19,11 +19,17 @@ namespace ProjectOOctopus.Services
             _rolesService = rolesService;
         }
 
-        public async Task Test()
+        public async Task Export(string path)
         {
             try
             {
-                var path = Path.Combine("C:\\Users\\David\\Desktop", $"test.xlsx");
+                string finalPath = Path.Combine(path, $"ProjectOOctopusExport{DateTime.Now.ToString("dd-M-yyyy", CultureInfo.InvariantCulture)}.xlsx");
+
+                if (File.Exists(finalPath))
+                {
+                    bool accept = await Shell.Current.DisplayAlert("Export Alert", "Export file in this folder already exists, are you sure you want to override it?", "Yes", "No");
+                    if (!accept) return;
+                }
 
                 using (ExcelPackage package = new ExcelPackage())
                 {
@@ -56,7 +62,7 @@ namespace ProjectOOctopus.Services
                             worksheet.Column(i).Width = 10d;
                         }
 
-                        FileInfo file = new FileInfo(path);
+                        FileInfo file = new FileInfo(finalPath);
                         package.SaveAs(file);
                     }
 
@@ -115,28 +121,33 @@ namespace ProjectOOctopus.Services
             foreach (AssignedRoleCollection col in projectData.EmployeesByRoles)
             {
                 int startRowIndex = currentRowIndex;
+
+                //No employees found
                 if (col.Employees.Count == 0)
                 {
                     int endRowIndex = currentRowIndex + col.TargetCount - 1;
 
-                    //No employees found
                     worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Value = $"No employee{(col.TargetCount > 1 ? "s" : string.Empty)} assigned";
                     worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Style.WrapText = true;
                     worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Merge = true;
                     worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                     worksheet.Cells[startRowIndex, 3, endRowIndex, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
+
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.WrapText = true;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Merge = true;
+
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
                     currentRowIndex += col.TargetCount;
                 }
-            }
-
-            /*
-            //Employees
-            foreach (AssignedRoleCollection col in projectData.EmployeesByRoles)
-            {
-                int start = currentRowIndex;
-                if (col.Employees.Count > 0)
+                else
                 {
+                    //Employee name and assignment
                     foreach (AssignedEmployeeData employee in col.Employees)
                     {
                         worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4].Value = employee.Employee.FullName;
@@ -145,6 +156,7 @@ namespace ProjectOOctopus.Services
 
                         worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Value = employee.Employee.GetAssignentUsage(projectData, col) + "%";
                         worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                         worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6].Merge = true;
 
                         //Assignment warning over 100%
@@ -156,31 +168,18 @@ namespace ProjectOOctopus.Services
 
                         currentRowIndex++;
                     }
+
+                    int endRowIndex = currentRowIndex - 1;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.WrapText = true;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Merge = true;
+
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[startRowIndex, 1, endRowIndex, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                 }
-                else
-                {
-                    //No employees found
-                    worksheet.Cells[start, 3, start + col.TargetCount, 6].Value = $"No employee{(col.TargetCount > 1 ? "s" : string.Empty)} assigned";
-                    worksheet.Cells[start, 3, start + col.TargetCount, 6].Style.WrapText = true;
-                    worksheet.Cells[start, 3, start + col.TargetCount, 6].Merge = true;
-                    worksheet.Cells[start, 3, start + col.TargetCount, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[start, 3, start + col.TargetCount, 6].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-
-                    currentRowIndex += col.TargetCount;
-                }
-
-                //Add role and merge rows if needed
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Value = $"{col.Role.Name} ({$"{col.Employees.Count}/{col.TargetCount}"})";
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(col.Role.Color.ToInt()));
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Style.WrapText = true;
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Merge = true;
-
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells[start, 1, start + col.TargetCount, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-
             }
-            */
 
             return currentRowIndex;
         }
