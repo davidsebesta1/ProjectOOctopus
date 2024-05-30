@@ -3,6 +3,7 @@ using System.Data;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ProjectOOctopus.Services
 {
@@ -60,18 +61,26 @@ namespace ProjectOOctopus.Services
 
                     int curRowIndexEmployees = 3;
                     //Header
-                    worksheetEmployees.Cells[curRowIndexEmployees, 1, curRowIndexEmployees, 7].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheetEmployees.Cells[curRowIndexEmployees, 1, curRowIndexEmployees, 7].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(10197915));
+                    ExcelRange headerCellsAll = worksheetEmployees.Cells[curRowIndexEmployees, 1, curRowIndexEmployees, 7];
+                    headerCellsAll.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    headerCellsAll.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(10197915));
 
-                    worksheetEmployees.Cells[curRowIndexEmployees, 1, curRowIndexEmployees, 2].Value = "Employee Name";
-                    worksheetEmployees.Cells[curRowIndexEmployees, 1, curRowIndexEmployees, 2].Merge = true;
+                    //Emp name
+                    ExcelRange headerEmpNameCells = worksheetEmployees.Cells[curRowIndexEmployees, 1, curRowIndexEmployees, 2];
+                    headerEmpNameCells.Value = "Employee Name";
+                    headerEmpNameCells.Merge = true;
 
-                    worksheetEmployees.Cells[curRowIndexEmployees, 3, curRowIndexEmployees, 4].Value = "Project Name";
-                    worksheetEmployees.Cells[curRowIndexEmployees, 3, curRowIndexEmployees, 4].Merge = true;
+                    //Pr name
+                    ExcelRange headerPrNameCells = worksheetEmployees.Cells[curRowIndexEmployees, 3, curRowIndexEmployees, 4];
+                    headerPrNameCells.Value = "Project Name";
+                    headerPrNameCells.Merge = true;
 
-                    worksheetEmployees.Cells[curRowIndexEmployees, 5, curRowIndexEmployees, 6].Value = "Role";
-                    worksheetEmployees.Cells[curRowIndexEmployees, 5, curRowIndexEmployees, 6].Merge = true;
+                    //Role
+                    ExcelRange headerRoleNameCells = worksheetEmployees.Cells[curRowIndexEmployees, 5, curRowIndexEmployees, 6];
+                    headerRoleNameCells.Value = "Role";
+                    headerRoleNameCells.Merge = true;
 
+                    //Assignment
                     worksheetEmployees.Cells[curRowIndexEmployees, 7].Value = "Assignment";
 
                     curRowIndexEmployees++;
@@ -87,10 +96,8 @@ namespace ProjectOOctopus.Services
 
                     #endregion
 
-
                     FileInfo file = new FileInfo(finalPath);
                     package.SaveAs(file);
-
                 }
 
                 await Shell.Current.DisplayAlert("Export", "Export successfull!", "Return");
@@ -99,6 +106,11 @@ namespace ProjectOOctopus.Services
             {
                 await Shell.Current.DisplayAlert("Export", ex.GetBaseException().Message, "Okay");
             }
+        }
+
+        public async Task Import(string fullPath)
+        {
+
         }
 
         private void WriteExportHeader(ExcelWorksheet worksheet)
@@ -218,6 +230,41 @@ namespace ProjectOOctopus.Services
         {
             int currentRowIndex = startingRowIndex;
 
+            int sum = employee._assignmentsPerctangeByProject.Sum(n => n.Value.Count);
+            if (sum == 0)
+            {
+                ExcelRange empName = worksheet.Cells[currentRowIndex, 1, currentRowIndex, 2];
+                empName.Value = employee.FullName;
+                empName.Merge = true;
+
+                ExcelRange prNameCells = worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4];
+                prNameCells.Value = "-";
+                prNameCells.Merge = true;
+
+                ExcelRange roleNameCells = worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6];
+                roleNameCells.Value = "-";
+                roleNameCells.Merge = true;
+
+                ExcelRange roleAssignmentCells = worksheet.Cells[currentRowIndex, 7];
+                roleAssignmentCells.Value = "-";
+                roleAssignmentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                roleAssignmentCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                roleAssignmentCells.Merge = true;
+
+                currentRowIndex++;
+
+                ExcelRange roleAssignmentTotalCells = worksheet.Cells[currentRowIndex, 7];
+                roleAssignmentTotalCells.Value = employee.TotalAssignmentUsage + "%";
+                roleAssignmentTotalCells.Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(-569311));
+                roleAssignmentTotalCells.Style.Font.Bold = true;
+                roleAssignmentTotalCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                roleAssignmentTotalCells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                roleAssignmentTotalCells.Merge = true;
+
+
+                return currentRowIndex + 1;
+            }
+
             int totalRequiredRows = employee._assignmentsPerctangeByProject.Sum(n => n.Value.Count) - 1;
 
             worksheet.Cells[currentRowIndex, 1, currentRowIndex + totalRequiredRows, 2].Value = employee.FullName;
@@ -254,14 +301,13 @@ namespace ProjectOOctopus.Services
                 }
             }
 
-            worksheet.Cells[currentRowIndex, 7].Value = employee.TotalAssignmentUsage + "%";
-            worksheet.Cells[currentRowIndex, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
 
             System.Drawing.Color textColor;
             if (employee.TotalAssignmentUsage < 100) textColor = System.Drawing.Color.FromArgb(-569311);
             else if (employee.TotalAssignmentUsage > 100) textColor = System.Drawing.Color.FromArgb(-536287);
             else textColor = System.Drawing.Color.FromArgb(-12527265);
 
+            worksheet.Cells[currentRowIndex, 7].Value = employee.TotalAssignmentUsage + "%";
             worksheet.Cells[currentRowIndex, 7].Style.Font.Color.SetColor(textColor);
             worksheet.Cells[currentRowIndex, 7].Style.Font.Bold = true;
             worksheet.Cells[currentRowIndex, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
