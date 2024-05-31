@@ -1,4 +1,7 @@
-﻿namespace ProjectOOctopus
+﻿
+using Microsoft.Extensions.Logging;
+
+namespace ProjectOOctopus
 {
     public partial class App : Application
     {
@@ -7,6 +10,7 @@
             InitializeComponent();
 
             MainPage = new AppShell();
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
 using Mopups.Hosting;
 using ProjectOOctopus.Pages;
 using ProjectOOctopus.Services;
@@ -32,7 +33,45 @@ namespace ProjectOOctopus
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                }).ConfigureLifecycleEvents(events =>
+                {
+
+#if WINDOWS
+                    events.AddWindows(windowsLifecycleBuilder =>
+                    {
+                        windowsLifecycleBuilder.OnWindowCreated(window =>
+                        {
+                            if (window.Title == "ProjectOOctopus")
+                            {
+                                var windows = window;
+                                var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                                var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
+                                var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
+
+                                appWindow.Closing += async (s, e) =>
+                                {
+                                    e.Cancel = true;
+
+                                    foreach (Window win in Application.Current.Windows)
+                                    {
+                                        if (win.Title == null)
+                                        {
+                                            bool result = await Shell.Current.DisplayAlert("Exit Confirmation", "You sure want to close app? Unsaved progress will be lost!", "Close App", "Cancel");
+
+                                            if (result)
+                                            {
+                                                Application.Current.CloseWindow(win);
+                                            }
+                                        }
+                                    }
+
+                                };
+                            }
+
+                        });
+                    });
                 });
+#endif
 
 #if DEBUG
             builder.Logging.AddDebug();
