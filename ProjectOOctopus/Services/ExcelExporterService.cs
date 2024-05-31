@@ -196,14 +196,17 @@ namespace ProjectOOctopus.Services
             prHeaderCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
             prHeaderCell.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(10197915));
 
-            prHeaderCell.Value = "Role";
-            prHeaderCell.Merge = true;
+            ExcelRange headerRoleNameCells = worksheet.Cells[currentRowIndex, 1, currentRowIndex, 2];
+            headerRoleNameCells.Value = "Role";
+            headerRoleNameCells.Merge = true;
 
-            prHeaderCell.Value = "Employee Name";
-            prHeaderCell.Merge = true;
+            ExcelRange headerEmpNameCells = worksheet.Cells[currentRowIndex, 3, currentRowIndex, 4];
+            headerEmpNameCells.Value = "Employee Name";
+            headerEmpNameCells.Merge = true;
 
-            prHeaderCell.Value = "Employee Assignment %";
-            prHeaderCell.Merge = true;
+            ExcelRange headerAssignCells = worksheet.Cells[currentRowIndex, 5, currentRowIndex, 6];
+            headerAssignCells.Value = "Employee Assignment %";
+            headerAssignCells.Merge = true;
 
             currentRowIndex++;
 
