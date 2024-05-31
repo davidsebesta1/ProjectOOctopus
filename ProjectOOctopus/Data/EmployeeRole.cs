@@ -60,7 +60,7 @@ namespace ProjectOOctopus.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name);
+            return base.GetHashCode();
         }
 
         public static bool operator ==(EmployeeRole? left, EmployeeRole? right)

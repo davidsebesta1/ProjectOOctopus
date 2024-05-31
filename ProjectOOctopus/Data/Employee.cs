@@ -153,7 +153,7 @@ namespace ProjectOOctopus.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FirstName, LastName);
+            return base.GetHashCode();
         }
 
         public void Dispose()

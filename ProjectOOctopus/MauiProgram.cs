@@ -58,7 +58,7 @@ namespace ProjectOOctopus
                                     {
                                         if (win.Title == null)
                                         {
-                                            bool result = await Shell.Current.DisplayAlert("Exit Confirmation", "You sure want to close app? Unsaved progress will be lost!", "Close App", "Cancel");
+                                            bool result = await Shell.Current.DisplayAlert("Exit Confirmation", "You sure want to close the app? Unsaved progress will be lost!", "Close App", "Cancel");
 
                                             if (result)
                                             {

@@ -49,7 +49,7 @@ namespace ProjectOOctopus.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Employee);
+            return _employee.GetHashCode();
         }
 
         public static bool operator ==(AssignedEmployeeData? left, AssignedEmployeeData? right)

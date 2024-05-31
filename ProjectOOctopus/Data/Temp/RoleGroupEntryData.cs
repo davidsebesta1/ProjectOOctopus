@@ -42,7 +42,7 @@ namespace ProjectOOctopus.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Role);
+            return _role.GetHashCode();
         }
 
         public static bool operator ==(RoleGroupEntryData? left, RoleGroupEntryData? right)

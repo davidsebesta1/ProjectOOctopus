@@ -196,7 +196,7 @@ namespace ProjectOOctopus.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ProjectName, ProjectDescription);
+            return base.GetHashCode();
         }
 
         public static bool operator ==(ProjectData? left, ProjectData? right)

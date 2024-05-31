@@ -7,7 +7,7 @@
              Title="ImportPopup">
     <Frame WidthRequest="300" HeightRequest="400" BackgroundColor="#EE333333" Padding="15">
         <VerticalStackLayout Spacing="20" Padding="0,15,0,0">
-            <Label Text="Export Path:" FontSize="18"/>
+            <Label Text="Import Path:" FontSize="18"/>
             <Label x:Name="TargetDirectoryPathLabel" WidthRequest="250"/>
             <Button x:Name="SelectPathButton" Text="Select Path" Clicked="SelectPathButton_Clicked"/>
             <Button x:Name="ImportButton" Text="Import" Clicked="ImportButton_Clicked"/>

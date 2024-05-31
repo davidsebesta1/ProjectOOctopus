@@ -107,7 +107,7 @@ namespace ProjectOOctopus.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Role);
+            return base.GetHashCode();
         }
 
         public IEnumerator<AssignedEmployeeData> GetEnumerator()
