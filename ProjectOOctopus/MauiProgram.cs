@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Mopups.Hosting;
 using ProjectOOctopus.Pages;
 using ProjectOOctopus.Services;
@@ -44,9 +46,9 @@ namespace ProjectOOctopus
                             if (window.Title == "ProjectOOctopus")
                             {
                                 var windows = window;
-                                var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
-                                var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
-                                var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
+                                nint handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                                WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
+                                AppWindow appWindow = AppWindow.GetFromWindowId(id);
 
                                 appWindow.Closing += async (s, e) =>
                                 {
