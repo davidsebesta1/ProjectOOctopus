@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="@echo off&#xD;&#xA;&#xD;&#xA;set projectPath=..\ProjectOOctopus\ProjectOOctopus.csproj&#xD;&#xA;&#xD;&#xA;dotnet publish %25projectPath%25 -f net8.0-windows10.0.19041.0 -c Release -p:RuntimeIdentifierOverride=win10-x64 -p:WindowsPackageType=None&#xD;&#xA;&#xD;&#xA;if %25errorlevel%25 neq 0 (&#xD;&#xA;    echo Build failed for %25projectPath%25&#xD;&#xA;    exit /b %25errorlevel%25&#xD;&#xA;) else (&#xD;&#xA;    echo Build succeeded for %25projectPath%25&#xD;&#xA;)" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="@echo off&#xD;&#xA;&#xD;&#xA;set sourceDir=..\ProjectOOctopus\bin\Release\net8.0-windows10.0.19041.0\win10-x64&#xD;&#xA;set destinationDir=bin\Release\net7.0\win-x64\publish\lib&#xD;&#xA;&#xD;&#xA;if not exist %25destinationDir%25 (&#xD;&#xA;    mkdir %25destinationDir%25&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;xcopy %25sourceDir%25\* %25destinationDir%25 /E /I /Y&#xD;&#xA;&#xD;&#xA;if %25errorlevel%25 neq 0 (&#xD;&#xA;    echo Copying files failed&#xD;&#xA;    exit /b %25errorlevel%25&#xD;&#xA;) else (&#xD;&#xA;    echo Files copied to %25destinationDir%25&#xD;&#xA;)" />
+  </Target>
+
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+
+</Project>

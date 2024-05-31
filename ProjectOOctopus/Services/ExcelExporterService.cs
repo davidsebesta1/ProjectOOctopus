@@ -33,11 +33,11 @@ namespace ProjectOOctopus.Services
 
         #region Service Methods
 
-        public async Task Export(string path)
+        public async Task Export(string path, bool fileNameIncluded = false)
         {
             try
             {
-                string finalPath = Path.Combine(path, $"ProjectOOctopusExport{DateTime.Now.ToString("dd-M-yyyy", CultureInfo.InvariantCulture)}.xlsx");
+                string finalPath = fileNameIncluded ? path : Path.Combine(path, $"ProjectOOctopusExport{DateTime.Now.ToString("dd-M-yyyy", CultureInfo.InvariantCulture)}.xlsx");
 
                 if (File.Exists(finalPath))
                 {

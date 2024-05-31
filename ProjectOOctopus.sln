@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectOOctopus", "ProjectOOctopus\ProjectOOctopus.csproj", "{1E081B04-6D52-4424-9869-CF4E8F96651F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectOOctopus", "ProjectOOctopus\ProjectOOctopus.csproj", "{1E081B04-6D52-4424-9869-CF4E8F96651F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctopusRunner", "OctopusRunner\OctopusRunner.csproj", "{FDFA13C7-EC08-405E-943A-F7211291C846}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{1E081B04-6D52-4424-9869-CF4E8F96651F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E081B04-6D52-4424-9869-CF4E8F96651F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E081B04-6D52-4424-9869-CF4E8F96651F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FDFA13C7-EC08-405E-943A-F7211291C846}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFA13C7-EC08-405E-943A-F7211291C846}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFA13C7-EC08-405E-943A-F7211291C846}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFA13C7-EC08-405E-943A-F7211291C846}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

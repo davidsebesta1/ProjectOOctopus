@@ -41,6 +41,8 @@ namespace ProjectOOctopus
             if (File.Exists(tmpPath))
             {
                 await ServicesHelper.GetService<ExcelImporterService>().Import(tmpPath);
+
+                File.Delete(tmpPath);
             }
         }
 

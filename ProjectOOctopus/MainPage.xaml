@@ -21,7 +21,7 @@
 
         <MenuBarItem Text="Info and Help">
             <MenuFlyoutItem Text="Info" Command="{Binding OpenInfoPopupCommand}"/>
-            <MenuFlyoutItem Text="Safe Restart Application" Command="{Binding SafeRestartAppCommand}" ToolTipProperties.Text="Safely restarts application in case of a drag and drop freeze, work is automatically loaded back on startup"/>
+            <MenuFlyoutItem Text="Reload Application" Command="{Binding SafeRestartAppCommand}" ToolTipProperties.Text="Safely restarts application in case of a drag and drop freeze, work is automatically loaded back on startup"/>
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 

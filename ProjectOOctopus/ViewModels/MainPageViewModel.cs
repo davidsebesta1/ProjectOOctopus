@@ -5,6 +5,7 @@ using ProjectOOctopus.Data;
 using ProjectOOctopus.Pages;
 using ProjectOOctopus.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace ProjectOOctopus.ViewModels
 {
@@ -167,7 +168,28 @@ namespace ProjectOOctopus.ViewModels
         public async void SafeRestartApp()
         {
             string tmpPath = Path.Combine(Path.GetTempPath(), "projectooctopussaferestart.xlsx");
-            await _excelExporterService.Export(tmpPath);
+            _excelExporterService.Export(tmpPath, true);
+
+            string exeFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string dirPath = Path.GetDirectoryName(exeFilePath);
+
+            try
+            {
+                using (Process myProcess = new Process())
+                {
+                    myProcess.StartInfo.UseShellExecute = false;
+                    myProcess.StartInfo.FileName = Path.Combine(dirPath, "ProjectOOctopus.exe");
+                    myProcess.StartInfo.CreateNoWindow = true;
+                    myProcess.Start();
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.ToString());
+            }
+
+            await Task.Delay(1000);
+            Environment.Exit(0);
         }
 
         #endregion
